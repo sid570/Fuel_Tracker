@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LPG Savings – Honda Fit GK3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAF0F4; --surface:#FFFFFF; --ink:#13263A; --muted:#5A6B7C; --line:#D3DDE5;
+  --lpg:#1F6FB2; --petrol:#B87A0B; --save:#1E8A4C; --danger:#B3261E;
+  --display-bg:#0E1C12; --display-ink:#7CFFA0;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0F1B27; --surface:#172636; --ink:#E6EDF3; --muted:#9AAABA; --line:#2A3C4F;
+    --lpg:#5AA8EC; --petrol:#E8B44A; --save:#4FCB80; --danger:#FF8A80;
+    --display-bg:#06100A; --display-ink:#7CFFA0;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+header h1{font:700 1.9rem/1.1 "Barlow Condensed","Arial Narrow",sans-serif;margin:8px 0 2px}
+header p{margin:0;color:var(--muted)}
+
+/* pump readout – the one bold element */
+.pump{margin:20px 0;background:var(--display-bg);border-radius:14px;padding:18px 20px;
+  border:3px solid #2B3A2F;box-shadow:inset 0 0 24px rgba(0,0,0,.6)}
+.pump .lbl{color:#8FB89A;font-size:.85rem}
+.pump .big{font:700 clamp(2.4rem,9vw,3.6rem)/1 "Barlow Condensed",sans-serif;
+  color:var(--display-ink);text-shadow:0 0 12px rgba(124,255,160,.45);letter-spacing:.02em}
+.pump .row{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:10px;color:#BFE8CB;font-size:.92rem}
+.pump .row b{color:var(--display-ink);font-weight:600}
+
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+nav button{font:600 .95rem "Barlow",sans-serif;padding:12px 8px;border-radius:10px;
+  border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
+nav button .n{display:block;font-size:.75rem;color:var(--muted);font-weight:500}
+nav button[aria-current="true"]{border-color:var(--lpg);box-shadow:0 0 0 1px var(--lpg)}
+@media (max-width:520px){nav{grid-template-columns:repeat(2,1fr)}}
+
+section{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+section h2{font:700 1.35rem "Barlow Condensed",sans-serif;margin:0 0 12px}
+label{display:block;font-weight:600;margin:12px 0 4px}
+.hint{color:var(--muted);font-size:.85rem;font-weight:400}
+input,select{width:100%;font:inherit;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);
+  background:var(--bg);color:var(--ink)}
+input:focus,button:focus-visible,select:focus{outline:3px solid var(--lpg);outline-offset:1px}
+.btn{font:600 1rem "Barlow",sans-serif;padding:11px 18px;border-radius:8px;border:0;cursor:pointer;
+  background:var(--lpg);color:#fff;margin-top:16px}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.danger{background:var(--danger);color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media (max-width:520px){.grid2{grid-template-columns:1fr}}
+
+.report{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+.report table,.hist{width:100%;border-collapse:collapse}
+.report td{padding:6px 0;border-bottom:1px solid var(--line)}
+.report td:last-child{text-align:right;font-weight:600}
+.lpg{color:var(--lpg)} .petrol{color:var(--petrol)} .save{color:var(--save)} .neg{color:var(--danger)}
+.tablewrap{overflow-x:auto}
+.hist th,.hist td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-size:.92rem}
+.hist th:first-child,.hist td:first-child{text-align:left}
+.hist th{color:var(--muted);font-weight:600}
+.del{background:none;border:0;color:var(--danger);cursor:pointer;font:inherit}
+.empty{color:var(--muted)}
+.status{font-size:.85rem;color:var(--muted);margin-top:18px}
+details{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 18px}
+summary{cursor:pointer;font-weight:600}
+@media (prefers-reduced-motion:no-preference){.report{animation:in .25s ease-out}}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>LPG vs Gasoline</h1>
+    <p id="vehicle">Honda Fit GK3 2015 (L13B)</p>
+  </header>
+
+  <div class="pump" aria-live="polite">
+    <div class="lbl">Total saved with LPG</div>
+    <div class="big" id="pumpTotal">Rs 0.00</div>
+    <div class="row">
+      <span>Distance on LPG <b id="pumpKm">0 km</b></span>
+      <span>Cylinders <b id="pumpCyl">0</b></span>
+      <span>Entries <b id="pumpN">0</b></span>
+    </div>
+  </div>
+
+  <nav id="menu" aria-label="Main menu">
+    <button data-view="entry"><span class="n">1</span>New fuel entry</button>
+    <button data-view="summary"><span class="n">2</span>Savings summary</button>
+    <button data-view="history"><span class="n">3</span>Fuel history</button>
+    <button data-view="prices"><span class="n">4</span>Update fuel prices</button>
+    <button data-view="consumption"><span class="n">5</span>Update consumption</button>
+    <button data-view="reset"><span class="n">6</span>Reset tracking</button>
+  </nav>
+
+  <main id="view"></main>
+
+  <details id="syncBox">
+    <summary>Storage &amp; GitHub sync</summary>
+    <p class="hint">Records are always saved in this browser. To keep them safe and share them between your phone and computer, connect a GitHub repository. The app will save your records to a <code>data.json</code> file there.</p>
+    <div class="grid2">
+      <div><label for="ghOwner">GitHub username</label><input id="ghOwner" placeholder="your-username"></div>
+      <div><label for="ghRepo">Repository</label><input id="ghRepo" placeholder="fuel-data"></div>
+      <div><label for="ghPath">File path</label><input id="ghPath" value="data.json"></div>
+      <div><label for="ghBranch">Branch</label><input id="ghBranch" value="main"></div>
+    </div>
+    <label for="ghToken">Access token <span class="hint">(stored only on this device)</span></label>
+    <input id="ghToken" type="password" placeholder="github_pat_…">
+    <button class="btn" id="ghSave">Connect and sync</button>
+    <button class="btn ghost" id="ghPull">Load from GitHub</button>
+    <button class="btn ghost" id="ghOff">Disconnect</button>
+    <hr style="border:0;border-top:1px solid var(--line);margin:18px 0 4px">
+    <button class="btn ghost" id="exportBtn">Download backup</button>
+    <label class="btn ghost" style="display:inline-block;margin-top:16px;cursor:pointer">Restore backup
+      <input type="file" id="importFile" accept="application/json" hidden></label>
+  </details>
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+const DEFAULTS = {vehicle:"Honda Fit GK3 2015 (L13B)", kmPerL:14, cylKg:12, lpgPrice:250, gasPrice:77.70};
+const LS_DATA = "lpgTracker.data", LS_GH = "lpgTracker.github";
+let state = load();
+let gh = loadGh();
+
+function load(){
+  try{ const d = JSON.parse(localStorage.getItem(LS_DATA)); if(d && d.config && Array.isArray(d.entries)) return d; }catch(e){}
+  return {config:{...DEFAULTS}, entries:[]};
+}
+function loadGh(){ try{ return JSON.parse(localStorage.getItem(LS_GH)) || null; }catch(e){ return null; } }
+function saveLocal(){ try{ localStorage.setItem(LS_DATA, JSON.stringify(state)); }catch(e){} }
+
+const rs = n => "Rs " + n.toLocaleString("en-MU",{minimumFractionDigits:2,maximumFractionDigits:2});
+const num = (n,d=2) => n.toLocaleString("en-MU",{maximumFractionDigits:d});
+
+function calc(e){
+  const lpgCost = e.cyl * e.lpgPrice;
+  const litres = e.km / e.kmPerL;
+  const gasCost = litres * e.gasPrice;
+  const savings = gasCost - lpgCost;
+  return { lpgCost, litres, gasCost, savings,
+    pct: gasCost ? savings / gasCost * 100 : 0,
+    lpgPerKm: e.km ? lpgCost / e.km : 0,
+    gasPerKm: e.km ? gasCost / e.km : 0,
+    kmPerCyl: e.cyl ? e.km / e.cyl : 0 };
+}
+function totals(){
+  return state.entries.reduce((t,e)=>{ const c=calc(e);
+    t.km+=e.km; t.cyl+=e.cyl; t.lpg+=c.lpgCost; t.gas+=c.gasCost; t.save+=c.savings; t.litres+=c.litres; return t;
+  },{km:0,cyl:0,lpg:0,gas:0,save:0,litres:0});
+}
+
+function refreshPump(){
+  const t = totals();
+  document.getElementById("pumpTotal").textContent = rs(t.save);
+  document.getElementById("pumpKm").textContent = num(t.km,1) + " km";
+  document.getElementById("pumpCyl").textContent = num(t.cyl);
+  document.getElementById("pumpN").textContent = state.entries.length;
+  document.getElementById("vehicle").textContent =
+    `${state.config.vehicle}, ${state.config.kmPerL} km/L. LPG ${rs(state.config.lpgPrice)} per ${state.config.cylKg} kg cylinder, gasoline ${rs(state.config.gasPrice)}/L`;
+}
+
+function reportTable(e){
+  const c = calc(e);
+  return `<table>
+    <tr><td>Cylinders used</td><td>${num(e.cyl)}</td></tr>
+    <tr><td>Distance travelled</td><td>${num(e.km,1)} km</td></tr>
+    <tr><td>LPG expense</td><td class="lpg">${rs(c.lpgCost)}</td></tr>
+    <tr><td>Equivalent gasoline</td><td>${num(c.litres)} L</td></tr>
+    <tr><td>Equivalent gasoline expense</td><td class="petrol">${rs(c.gasCost)}</td></tr>
+    <tr><td>Savings</td><td class="${c.savings>=0?'save':'neg'}">${rs(c.savings)}</td></tr>
+    <tr><td>Savings percentage</td><td class="${c.savings>=0?'save':'neg'}">${num(c.pct,1)}%</td></tr>
+    <tr><td>Cost per km on LPG</td><td class="lpg">${rs(c.lpgPerKm)}</td></tr>
+    <tr><td>Cost per km on gasoline</td><td class="petrol">${rs(c.gasPerKm)}</td></tr>
+    <tr><td>Distance per cylinder</td><td>${num(c.kmPerCyl,1)} km</td></tr>
+  </table>`;
+}
+
+const views = {
+  entry(){
+    return `<section><h2>New fuel entry</h2>
+      <div class="grid2">
+        <div><label for="cyl">LPG cylinders used <span class="hint">(e.g. 1 or 0.5)</span></label>
+          <input id="cyl" type="number" inputmode="decimal" min="0" step="0.01"></div>
+        <div><label for="km">Kilometres travelled</label>
+          <input id="km" type="number" inputmode="decimal" min="0" step="0.1"></div>
+      </div>
+      <div id="preview"></div>
+      <button class="btn" id="saveEntry" disabled>Save entry</button>
+    </section>`;
+  },
+  summary(){
+    const t = totals(), n = state.entries.length;
+    if(!n) return `<section><h2>Savings summary</h2><p class="empty">No entries yet. Add your first fuel entry to see savings.</p></section>`;
+    const pct = t.gas ? t.save/t.gas*100 : 0;
+    return `<section><h2>Savings summary</h2><div class="report" style="border:0;padding:0;margin:0"><table>
+      <tr><td>Entries</td><td>${n}</td></tr>
+      <tr><td>Total distance on LPG</td><td>${num(t.km,1)} km</td></tr>
+      <tr><td>Total cylinders</td><td>${num(t.cyl)} (${num(t.cyl*state.config.cylKg,1)} kg)</td></tr>
+      <tr><td>Total LPG expense</td><td class="lpg">${rs(t.lpg)}</td></tr>
+      <tr><td>Gasoline it replaced</td><td>${num(t.litres)} L</td></tr>
+      <tr><td>Equivalent gasoline expense</td><td class="petrol">${rs(t.gas)}</td></tr>
+      <tr><td>Cumulative savings</td><td class="save">${rs(t.save)}</td></tr>
+      <tr><td>Overall savings percentage</td><td class="save">${num(pct,1)}%</td></tr>
+      <tr><td>Average cost per km on LPG</td><td class="lpg">${rs(t.km?t.lpg/t.km:0)}</td></tr>
+      <tr><td>Average cost per km on gasoline</td><td class="petrol">${rs(t.km?t.gas/t.km:0)}</td></tr>
+      <tr><td>Average distance per cylinder</td><td>${num(t.cyl?t.km/t.cyl:0,1)} km</td></tr>
+    </table></div></section>`;
+  },
+  history(){
+    if(!state.entries.length) return `<section><h2>Fuel history</h2><p class="empty">No entries yet. Choose “New fuel entry” to add one.</p></section>`;
+    let run = 0;
+    const rows = state.entries.map(e=>{ const c=calc(e); run+=c.savings; return {e,c,run}; }).reverse()
+      .map(({e,c,run})=>`<tr><td>${new Date(e.date).toLocaleDateString("en-GB")}</td><td>${num(e.cyl)}</td><td>${num(e.km,1)}</td>
+        <td class="lpg">${rs(c.lpgCost)}</td><td class="petrol">${rs(c.gasCost)}</td>
+        <td class="${c.savings>=0?'save':'neg'}">${rs(c.savings)}</td><td>${rs(run)}</td>
+        <td><button class="del" data-id="${e.id}" aria-label="Delete entry">Delete</button></td></tr>`).join("");
+    return `<section><h2>Fuel history</h2><div class="tablewrap"><table class="hist">
+      <tr><th>Date</th><th>Cyl.</th><th>km</th><th>LPG</th><th>Gasoline</th><th>Saved</th><th>Running total</th><th></th></tr>
+      ${rows}</table></div>
+      <p class="hint">Each entry keeps the prices in force when it was saved, so updating prices never changes past results.</p></section>`;
+  },
+  prices(){
+    const c = state.config;
+    return `<section><h2>Update fuel prices</h2>
+      <div class="grid2">
+        <div><label for="lpgPrice">LPG cylinder price (Rs)</label><input id="lpgPrice" type="number" step="0.01" value="${c.lpgPrice}"></div>
+        <div><label for="cylKg">Cylinder capacity (kg)</label><input id="cylKg" type="number" step="0.1" value="${c.cylKg}"></div>
+        <div><label for="gasPrice">Gasoline price (Rs per litre)</label><input id="gasPrice" type="number" step="0.01" value="${c.gasPrice}"></div>
+      </div>
+      <button class="btn" id="savePrices">Save prices</button>
+      <p class="hint">New prices apply to future entries only.</p></section>`;
+  },
+  consumption(){
+    return `<section><h2>Update vehicle consumption</h2>
+      <label for="kmPerL">Average gasoline consumption (km/L)</label>
+      <input id="kmPerL" type="number" step="0.1" value="${state.config.kmPerL}">
+      <button class="btn" id="saveCons">Save consumption</button>
+      <p class="hint">Applies to future entries only.</p></section>`;
+  },
+  reset(){
+    return `<section><h2>Reset tracking</h2>
+      <p>This deletes all ${state.entries.length} entries and restores the default prices and consumption. Download a backup first if you might need them.</p>
+      <label for="confirmTxt">Type RESET to confirm</label><input id="confirmTxt" autocomplete="off">
+      <button class="btn danger" id="doReset">Delete all records</button></section>`;
+  }
+};
+
+function show(name, msg){
+  document.querySelectorAll("#menu button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===name));
+  document.getElementById("view").innerHTML = views[name]();
+  bind[name] && bind[name]();
+  refreshPump();
+  if(msg) setStatus(msg);
+}
+
+const bind = {
+  entry(){
+    const cyl = $("#cyl"), km = $("#km"), btn = $("#saveEntry"), pv = $("#preview");
+    const read = () => ({cyl:parseFloat(cyl.value), km:parseFloat(km.value)});
+    const upd = () => {
+      const v = read(), okC = v.cyl>0, okK = v.km>0;
+      btn.disabled = !(okC && okK);
+      if(okC && okK) pv.innerHTML = `<div class="report">${reportTable({...v, ...pick()})}</div>`;
+      else if(okC || okK) pv.innerHTML = `<p class="hint" style="margin-top:12px">Now enter the ${okC?'kilometres travelled':'number of cylinders used'}.</p>`;
+      else pv.innerHTML = "";
+    };
+    cyl.oninput = km.oninput = upd; cyl.focus();
+    btn.onclick = () => {
+      const v = read(); if(!(v.cyl>0 && v.km>0)) return;
+      state.entries.push({id:Date.now().toString(36), date:new Date().toISOString(), ...v, ...pick()});
+      persist(); const c = calc(state.entries.at(-1));
+      show("summary", `Entry saved. You saved ${rs(c.savings)} on this trip.`);
+    };
+  },
+  history(){
+    document.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
+      if(!confirm("Delete this entry?")) return;
+      state.entries = state.entries.filter(e=>e.id!==b.dataset.id); persist(); show("history","Entry deleted.");
+    });
+  },
+  prices(){
+    $("#savePrices").onclick = () => {
+      const l=parseFloat($("#lpgPrice").value), g=parseFloat($("#gasPrice").value), k=parseFloat($("#cylKg").value);
+      if(!(l>0&&g>0&&k>0)) return setStatus("Enter prices and capacity greater than zero.");
+      Object.assign(state.config,{lpgPrice:l,gasPrice:g,cylKg:k}); persist(); show("entry","Prices updated.");
+    };
+  },
+  consumption(){
+    $("#saveCons").onclick = () => {
+      const v=parseFloat($("#kmPerL").value);
+      if(!(v>0)) return setStatus("Enter a consumption greater than zero.");
+      state.config.kmPerL=v; persist(); show("entry","Consumption updated.");
+    };
+  },
+  reset(){
+    $("#doReset").onclick = () => {
+      if($("#confirmTxt").value.trim()!=="RESET") return setStatus("Type RESET in the box to confirm.");
+      state = {config:{...DEFAULTS}, entries:[]}; persist(); show("entry","All records deleted. Defaults restored.");
+    };
+  }
+};
+
+const pick = () => ({lpgPrice:state.config.lpgPrice, gasPrice:state.config.gasPrice, kmPerL:state.config.kmPerL});
+const $ = s => document.querySelector(s);
+function setStatus(t){ $("#status").textContent = t; }
+
+/* ---------- GitHub storage ---------- */
+const b64enc = s => btoa(unescape(encodeURIComponent(s)));
+const b64dec = s => decodeURIComponent(escape(atob(s.replace(/\n/g,""))));
+function ghUrl(){ return `https://api.github.com/repos/${gh.owner}/${gh.repo}/contents/${encodeURIComponent(gh.path).replace(/%2F/g,"/")}`; }
+function ghHeaders(){ return {"Authorization":"Bearer "+gh.token, "Accept":"application/vnd.github+json"}; }
+
+async function ghGet(){
+  const r = await fetch(ghUrl()+"?ref="+encodeURIComponent(gh.branch)+"&t="+Date.now(), {headers:ghHeaders(), cache:"no-store"});
+  if(r.status===404) return null;
+  if(!r.ok) throw new Error("GitHub said " + r.status + (r.status===401?" (check your token)":""));
+  const j = await r.json(); return {sha:j.sha, data:JSON.parse(b64dec(j.content))};
+}
+async function ghPut(){
+  let sha; try{ const cur = await ghGet(); sha = cur && cur.sha; }catch(e){ throw e; }
+  const body = {message:"Update fuel records "+new Date().toISOString(), content:b64enc(JSON.stringify(state,null,2)), branch:gh.branch};
+  if(sha) body.sha = sha;
+  const r = await fetch(ghUrl(), {method:"PUT", headers:{...ghHeaders(),"Content-Type":"application/json"}, body:JSON.stringify(body)});
+  if(!r.ok) throw new Error("GitHub save failed (" + r.status + ")");
+}
+let pushing = Promise.resolve();
+function persist(){
+  saveLocal(); refreshPump();
+  if(!gh) return;
+  pushing = pushing.then(()=>ghPut()).then(()=>setStatus("Saved to GitHub at "+new Date().toLocaleTimeString()))
+    .catch(e=>setStatus("Saved on this device. "+e.message+". It will retry on your next change."));
+}
+async function pull(){
+  if(!gh) return;
+  setStatus("Loading records from GitHub…");
+  try{
+    const r = await ghGet();
+    if(r && r.data && Array.isArray(r.data.entries)){ state = r.data; saveLocal(); show("entry","Records loaded from GitHub."); }
+    else { await ghPut(); setStatus("Connected. Created "+gh.path+" in your repository."); }
+  }catch(e){ setStatus("Could not reach GitHub: "+e.message+". Using records saved on this device."); }
+}
+
+function fillGhForm(){
+  if(!gh) return;
+  $("#ghOwner").value=gh.owner; $("#ghRepo").value=gh.repo; $("#ghPath").value=gh.path; $("#ghBranch").value=gh.branch; $("#ghToken").value=gh.token;
+}
+$("#ghSave").onclick = async () => {
+  const g = {owner:$("#ghOwner").value.trim(), repo:$("#ghRepo").value.trim(), path:$("#ghPath").value.trim()||"data.json",
+             branch:$("#ghBranch").value.trim()||"main", token:$("#ghToken").value.trim()};
+  if(!g.owner||!g.repo||!g.token) return setStatus("Enter your username, repository and token.");
+  gh = g; try{ localStorage.setItem(LS_GH, JSON.stringify(gh)); }catch(e){}
+  try{ const r = await ghGet();
+    if(r && r.data && r.data.entries && r.data.entries.length && state.entries.length &&
+       !confirm("GitHub already has "+r.data.entries.length+" entries. OK = load them (replaces this device's records). Cancel = upload this device's records instead.")){
+      await ghPut(); return setStatus("This device's records uploaded to GitHub.");
+    }
+    if(r && r.data && Array.isArray(r.data.entries)){ state=r.data; saveLocal(); show("entry","Connected. Records loaded from GitHub."); }
+    else { await ghPut(); setStatus("Connected. Created "+gh.path+" in your repository."); }
+  }catch(e){ setStatus("Could not connect: "+e.message); }
+};
+$("#ghPull").onclick = () => gh ? pull() : setStatus("Connect a repository first.");
+$("#ghOff").onclick = () => { gh=null; try{localStorage.removeItem(LS_GH);}catch(e){}
+  ["#ghOwner","#ghRepo","#ghToken"].forEach(s=>$(s).value=""); setStatus("Disconnected. Records stay on this device."); };
+
+/* ---------- Backup ---------- */
+$("#exportBtn").onclick = () => {
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));
+  a.download="lpg-tracker-backup-"+new Date().toISOString().slice(0,10)+".json"; a.click();
+};
+$("#importFile").onchange = async ev => {
+  const f=ev.target.files[0]; if(!f) return;
+  try{ const d=JSON.parse(await f.text());
+    if(!d.config||!Array.isArray(d.entries)) throw 0;
+    if(!confirm("Replace current records with "+d.entries.length+" entries from the backup?")) return;
+    state=d; persist(); show("summary","Backup restored.");
+  }catch(e){ setStatus("That file is not a valid tracker backup."); }
+  ev.target.value="";
+};
+
+/* ---------- Menu + keyboard shortcuts 1–6 ---------- */
+document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>show(b.dataset.view));
+const order=["entry","summary","history","prices","consumption","reset"];
+document.addEventListener("keydown",e=>{
+  if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) return;
+  const i=parseInt(e.key,10); if(i>=1&&i<=6) show(order[i-1]);
+});
+
+fillGhForm();
+show("entry");
+pull();
+</script>
+</body>
+</html>
