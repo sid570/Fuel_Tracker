@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>LPG Savings – Honda Fit GK3</title>
+<meta name="theme-color" content="#EAF0F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1B27" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LPG Savings">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>LPG Savings Tracker</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛽</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
@@ -12,6 +19,7 @@
   --bg:#EAF0F4; --surface:#FFFFFF; --ink:#13263A; --muted:#5A6B7C; --line:#D3DDE5;
   --lpg:#1F6FB2; --petrol:#B87A0B; --save:#1E8A4C; --danger:#B3261E;
   --display-bg:#0E1C12; --display-ink:#7CFFA0;
+  --tabbar-h:64px;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
@@ -22,129 +30,192 @@
     color-scheme:dark;
   }
 }
-*{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);
   font:16px/1.5 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
-  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
-.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px}
 header h1{font:700 1.9rem/1.1 "Barlow Condensed","Arial Narrow",sans-serif;margin:8px 0 2px}
 header p{margin:0;color:var(--muted)}
+.vehbtn{background:none;border:0;padding:4px 0;margin:0;font:inherit;color:var(--muted);cursor:pointer;text-align:left;
+  text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 
-/* pump readout – the one bold element */
-.pump{margin:20px 0;background:var(--display-bg);border-radius:14px;padding:18px 20px;
+/* pump readout */
+.pump{margin:16px 0;background:var(--display-bg);border-radius:14px;padding:16px 18px;
   border:3px solid #2B3A2F;box-shadow:inset 0 0 24px rgba(0,0,0,.6)}
 .pump .lbl{color:#8FB89A;font-size:.85rem}
-.pump .big{font:700 clamp(2.4rem,9vw,3.6rem)/1 "Barlow Condensed",sans-serif;
-  color:var(--display-ink);text-shadow:0 0 12px rgba(124,255,160,.45);letter-spacing:.02em}
-.pump .row{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:10px;color:#BFE8CB;font-size:.92rem}
-.pump .row b{color:var(--display-ink);font-weight:600}
+.pump .big{font:700 clamp(2.4rem,11vw,3.6rem)/1.05 "Barlow Condensed",sans-serif;
+  color:var(--display-ink);text-shadow:0 0 12px rgba(124,255,160,.45);letter-spacing:.02em;word-break:break-word}
+.pump .row{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:4px 28px;margin-top:10px;color:#BFE8CB;font-size:.85rem}
+.pump .row b{display:block;color:var(--display-ink);font-weight:600;font-size:1.05rem}
 
-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
-nav button{font:600 .95rem "Barlow",sans-serif;padding:12px 8px;border-radius:10px;
+/* desktop menu */
+nav.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+nav.menu button{font:600 .95rem "Barlow",sans-serif;padding:12px 10px;border-radius:10px;min-height:56px;
   border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
-nav button .n{display:block;font-size:.75rem;color:var(--muted);font-weight:500}
-nav button[aria-current="true"]{border-color:var(--lpg);box-shadow:0 0 0 1px var(--lpg)}
-@media (max-width:520px){nav{grid-template-columns:repeat(2,1fr)}}
+nav.menu button .n{display:block;font-size:.75rem;color:var(--muted);font-weight:500}
+nav.menu button[aria-current="true"]{border-color:var(--lpg);box-shadow:0 0 0 1px var(--lpg)}
+
+/* phone tab bar */
+nav.tabs{display:none}
+@media (max-width:640px){
+  nav.menu{display:none}
+  .wrap{padding:12px 14px calc(var(--tabbar-h) + 32px)}
+  header h1{font-size:1.6rem}
+  nav.tabs{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:var(--surface);border-top:1px solid var(--line);
+    padding:0 4px env(safe-area-inset-bottom,0px)}
+  nav.tabs button{background:none;border:0;color:var(--muted);font:600 .72rem "Barlow",sans-serif;
+    height:var(--tabbar-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer}
+  nav.tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  nav.tabs button[aria-current="true"]{color:var(--lpg)}
+  section{padding:16px 14px}
+  .btn{width:100%}
+}
 
 section{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
-section h2{font:700 1.35rem "Barlow Condensed",sans-serif;margin:0 0 12px}
-label{display:block;font-weight:600;margin:12px 0 4px}
+section h2{font:700 1.35rem "Barlow Condensed",sans-serif;margin:0 0 8px}
+label{display:block;font-weight:600;margin:14px 0 6px}
 .hint{color:var(--muted);font-size:.85rem;font-weight:400}
-input,select{width:100%;font:inherit;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);
-  background:var(--bg);color:var(--ink)}
+input,select{width:100%;font:500 16px/1.3 "Barlow",sans-serif;padding:12px 14px;min-height:50px;border-radius:10px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--ink);appearance:none}
+input.big{font-size:1.5rem;font-weight:600;min-height:58px}
 input:focus,button:focus-visible,select:focus{outline:3px solid var(--lpg);outline-offset:1px}
-.btn{font:600 1rem "Barlow",sans-serif;padding:11px 18px;border-radius:8px;border:0;cursor:pointer;
+.btn{font:600 1rem "Barlow",sans-serif;padding:13px 20px;min-height:50px;border-radius:10px;border:0;cursor:pointer;
   background:var(--lpg);color:#fff;margin-top:16px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .btn.danger{background:var(--danger);color:#fff}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 @media (max-width:520px){.grid2{grid-template-columns:1fr}}
 
-.report{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
-.report table,.hist{width:100%;border-collapse:collapse}
-.report td{padding:6px 0;border-bottom:1px solid var(--line)}
-.report td:last-child{text-align:right;font-weight:600}
+.chips{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.chip{font:600 .95rem "Barlow",sans-serif;padding:8px 16px;min-height:40px;border-radius:20px;border:1.5px solid var(--line);
+  background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--lpg);color:var(--lpg)}
+
+.report{margin-top:18px;border-top:1px dashed var(--line);padding-top:12px}
+.report table{width:100%;border-collapse:collapse}
+.report td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.report td:last-child{text-align:right;font-weight:600;padding-left:12px;white-space:nowrap}
+.report tr.key td{font-size:1.15rem}
 .lpg{color:var(--lpg)} .petrol{color:var(--petrol)} .save{color:var(--save)} .neg{color:var(--danger)}
+
+/* history: table on wide screens, cards on phones */
 .tablewrap{overflow-x:auto}
+.hist{width:100%;border-collapse:collapse}
 .hist th,.hist td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-size:.92rem}
 .hist th:first-child,.hist td:first-child{text-align:left}
 .hist th{color:var(--muted);font-weight:600}
-.del{background:none;border:0;color:var(--danger);cursor:pointer;font:inherit}
+.cards{display:none;list-style:none;margin:0;padding:0}
+.cards li{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.cards .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cards .saved{font:700 1.4rem "Barlow Condensed",sans-serif}
+.cards .meta{color:var(--muted);font-size:.9rem}
+.cards dl{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:10px 0 0}
+.cards dt{color:var(--muted);font-size:.8rem}
+.cards dd{margin:0;font-weight:600}
+@media (max-width:640px){.tablewrap{display:none}.cards{display:block}}
+.del{background:none;border:0;color:var(--danger);cursor:pointer;font:600 .9rem "Barlow",sans-serif;padding:8px 0;min-height:40px}
+
+/* "more" list */
+.list{list-style:none;margin:0;padding:0}
+.list button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;
+  background:none;border:0;border-bottom:1px solid var(--line);padding:16px 2px;min-height:60px;
+  font:600 1.02rem "Barlow",sans-serif;color:var(--ink);cursor:pointer;text-align:left}
+.list li:last-child button{border-bottom:0}
+.list .sub{display:block;font-weight:400;font-size:.85rem;color:var(--muted)}
+.list .chev{color:var(--muted);font-size:1.3rem}
+.back{background:none;border:0;color:var(--lpg);font:600 .95rem "Barlow",sans-serif;padding:6px 0 10px;cursor:pointer;display:none}
+@media (max-width:640px){.back{display:inline-block}}
+
 .empty{color:var(--muted)}
-.status{font-size:.85rem;color:var(--muted);margin-top:18px}
-details{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 18px}
-summary{cursor:pointer;font-weight:600}
+.syncline{font-size:.85rem;color:var(--muted);margin-top:14px;text-align:center}
+.linkbtn{background:none;border:0;color:var(--lpg);font:inherit;cursor:pointer;text-decoration:underline;padding:4px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));
+  max-width:min(92vw,520px);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:10px;
+  font-size:.95rem;z-index:30;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+@media (max-width:640px){.toast{bottom:calc(var(--tabbar-h) + 12px + env(safe-area-inset-bottom,0px))}}
 @media (prefers-reduced-motion:no-preference){.report{animation:in .25s ease-out}}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+code{font-size:.9em}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>LPG vs Gasoline</h1>
-    <p id="vehicle">Honda Fit GK3 2015 (L13B)</p>
+    <button class="vehbtn" id="vehicle" aria-label="Edit vehicle"></button>
   </header>
 
   <div class="pump" aria-live="polite">
     <div class="lbl">Total saved with LPG</div>
     <div class="big" id="pumpTotal">Rs 0.00</div>
     <div class="row">
-      <span>Distance on LPG <b id="pumpKm">0 km</b></span>
-      <span>Cylinders <b id="pumpCyl">0</b></span>
-      <span>Entries <b id="pumpN">0</b></span>
+      <span>Distance<b id="pumpKm">0 km</b></span>
+      <span>Cylinders<b id="pumpCyl">0</b></span>
+      <span>Entries<b id="pumpN">0</b></span>
     </div>
   </div>
 
-  <nav id="menu" aria-label="Main menu">
+  <nav class="menu" aria-label="Main menu">
     <button data-view="entry"><span class="n">1</span>New fuel entry</button>
     <button data-view="summary"><span class="n">2</span>Savings summary</button>
     <button data-view="history"><span class="n">3</span>Fuel history</button>
     <button data-view="prices"><span class="n">4</span>Update fuel prices</button>
-    <button data-view="consumption"><span class="n">5</span>Update consumption</button>
+    <button data-view="vehicle"><span class="n">5</span>Update vehicle</button>
     <button data-view="reset"><span class="n">6</span>Reset tracking</button>
   </nav>
 
   <main id="view"></main>
 
-  <details id="syncBox">
-    <summary>Storage &amp; GitHub sync</summary>
-    <p class="hint">Records are always saved in this browser. To keep them safe and share them between your phone and computer, connect a GitHub repository. The app will save your records to a <code>data.json</code> file there.</p>
-    <div class="grid2">
-      <div><label for="ghOwner">GitHub username</label><input id="ghOwner" placeholder="your-username"></div>
-      <div><label for="ghRepo">Repository</label><input id="ghRepo" placeholder="fuel-data"></div>
-      <div><label for="ghPath">File path</label><input id="ghPath" value="data.json"></div>
-      <div><label for="ghBranch">Branch</label><input id="ghBranch" value="main"></div>
-    </div>
-    <label for="ghToken">Access token <span class="hint">(stored only on this device)</span></label>
-    <input id="ghToken" type="password" placeholder="github_pat_…">
-    <button class="btn" id="ghSave">Connect and sync</button>
-    <button class="btn ghost" id="ghPull">Load from GitHub</button>
-    <button class="btn ghost" id="ghOff">Disconnect</button>
-    <hr style="border:0;border-top:1px solid var(--line);margin:18px 0 4px">
-    <button class="btn ghost" id="exportBtn">Download backup</button>
-    <label class="btn ghost" style="display:inline-block;margin-top:16px;cursor:pointer">Restore backup
-      <input type="file" id="importFile" accept="application/json" hidden></label>
-  </details>
-
-  <div class="status" id="status"></div>
+  <p class="syncline"><span id="syncState">Saved on this device.</span>
+    <button class="linkbtn" data-view="storage">Storage &amp; sync</button></p>
 </div>
 
+<nav class="tabs" aria-label="Main menu">
+  <button data-view="entry"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>New entry</button>
+  <button data-view="summary"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Summary</button>
+  <button data-view="history"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>History</button>
+  <button data-view="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>More</button>
+</nav>
+
+<div class="toast" id="toast" role="status"></div>
+
 <script>
-const DEFAULTS = {vehicle:"Honda Fit GK3 2015 (L13B)", kmPerL:14, cylKg:12, lpgPrice:250, gasPrice:77.70};
+const DEFAULTS = {vehicleName:"Honda Fit GK3", vehicleYear:"2015", vehicleEngine:"L13B",
+                  kmPerL:14, cylKg:12, lpgPrice:250, gasPrice:77.70};
 const LS_DATA = "lpgTracker.data", LS_GH = "lpgTracker.github";
+const MORE_VIEWS = ["prices","vehicle","reset","storage"];
 let state = load();
 let gh = loadGh();
+let current = "entry";
 
+function normalise(d){
+  const c = {...DEFAULTS, ...(d.config||{})};
+  // migrate older single-string vehicle field
+  if(d.config && d.config.vehicle && !d.config.vehicleName && d.config.vehicle !== "Honda Fit GK3 2015 (L13B)"){
+    c.vehicleName = d.config.vehicle; c.vehicleYear = ""; c.vehicleEngine = "";
+  }
+  delete c.vehicle;
+  return {config:c, entries:Array.isArray(d.entries)?d.entries:[]};
+}
 function load(){
-  try{ const d = JSON.parse(localStorage.getItem(LS_DATA)); if(d && d.config && Array.isArray(d.entries)) return d; }catch(e){}
+  try{ const d = JSON.parse(localStorage.getItem(LS_DATA)); if(d && d.config) return normalise(d); }catch(e){}
   return {config:{...DEFAULTS}, entries:[]};
 }
 function loadGh(){ try{ return JSON.parse(localStorage.getItem(LS_GH)) || null; }catch(e){ return null; } }
 function saveLocal(){ try{ localStorage.setItem(LS_DATA, JSON.stringify(state)); }catch(e){} }
 
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rs = n => "Rs " + n.toLocaleString("en-MU",{minimumFractionDigits:2,maximumFractionDigits:2});
 const num = (n,d=2) => n.toLocaleString("en-MU",{maximumFractionDigits:d});
+function vehicleLabel(c=state.config){
+  return [c.vehicleName, c.vehicleYear].filter(Boolean).join(" ") + (c.vehicleEngine ? ` (${c.vehicleEngine})` : "");
+}
 
 function calc(e){
   const lpgCost = e.cyl * e.lpgPrice;
@@ -165,107 +236,165 @@ function totals(){
 
 function refreshPump(){
   const t = totals();
-  document.getElementById("pumpTotal").textContent = rs(t.save);
-  document.getElementById("pumpKm").textContent = num(t.km,1) + " km";
-  document.getElementById("pumpCyl").textContent = num(t.cyl);
-  document.getElementById("pumpN").textContent = state.entries.length;
-  document.getElementById("vehicle").textContent =
-    `${state.config.vehicle}, ${state.config.kmPerL} km/L. LPG ${rs(state.config.lpgPrice)} per ${state.config.cylKg} kg cylinder, gasoline ${rs(state.config.gasPrice)}/L`;
+  $("#pumpTotal").textContent = rs(t.save);
+  $("#pumpKm").textContent = num(t.km,1) + " km";
+  $("#pumpCyl").textContent = num(t.cyl);
+  $("#pumpN").textContent = state.entries.length;
+  $("#vehicle").textContent = `${vehicleLabel()}, ${num(state.config.kmPerL,1)} km/L`;
+  document.title = "LPG Savings – " + (state.config.vehicleName || "My car");
 }
 
 function reportTable(e){
-  const c = calc(e);
+  const c = calc(e), cls = c.savings>=0?'save':'neg';
   return `<table>
-    <tr><td>Cylinders used</td><td>${num(e.cyl)}</td></tr>
-    <tr><td>Distance travelled</td><td>${num(e.km,1)} km</td></tr>
+    <tr class="key"><td>Savings</td><td class="${cls}">${rs(c.savings)}</td></tr>
+    <tr><td>Savings percentage</td><td class="${cls}">${num(c.pct,1)}%</td></tr>
     <tr><td>LPG expense</td><td class="lpg">${rs(c.lpgCost)}</td></tr>
-    <tr><td>Equivalent gasoline</td><td>${num(c.litres)} L</td></tr>
     <tr><td>Equivalent gasoline expense</td><td class="petrol">${rs(c.gasCost)}</td></tr>
-    <tr><td>Savings</td><td class="${c.savings>=0?'save':'neg'}">${rs(c.savings)}</td></tr>
-    <tr><td>Savings percentage</td><td class="${c.savings>=0?'save':'neg'}">${num(c.pct,1)}%</td></tr>
+    <tr><td>Equivalent gasoline</td><td>${num(c.litres)} L</td></tr>
     <tr><td>Cost per km on LPG</td><td class="lpg">${rs(c.lpgPerKm)}</td></tr>
     <tr><td>Cost per km on gasoline</td><td class="petrol">${rs(c.gasPerKm)}</td></tr>
     <tr><td>Distance per cylinder</td><td>${num(c.kmPerCyl,1)} km</td></tr>
   </table>`;
 }
+const back = () => `<button class="back" data-view="more">‹ More</button>`;
 
 const views = {
   entry(){
     return `<section><h2>New fuel entry</h2>
-      <div class="grid2">
-        <div><label for="cyl">LPG cylinders used <span class="hint">(e.g. 1 or 0.5)</span></label>
-          <input id="cyl" type="number" inputmode="decimal" min="0" step="0.01"></div>
-        <div><label for="km">Kilometres travelled</label>
-          <input id="km" type="number" inputmode="decimal" min="0" step="0.1"></div>
+      <label for="cyl">LPG cylinders used</label>
+      <input id="cyl" class="big" type="number" inputmode="decimal" min="0" step="0.01" enterkeyhint="next" placeholder="0">
+      <div class="chips" role="group" aria-label="Quick cylinder amounts">
+        ${[0.5,1,1.5,2].map(v=>`<button type="button" class="chip" data-cyl="${v}" aria-pressed="false">${v}</button>`).join("")}
       </div>
+      <label for="km">Kilometres travelled</label>
+      <input id="km" class="big" type="number" inputmode="decimal" min="0" step="0.1" enterkeyhint="done" placeholder="0">
       <div id="preview"></div>
       <button class="btn" id="saveEntry" disabled>Save entry</button>
     </section>`;
   },
   summary(){
     const t = totals(), n = state.entries.length;
-    if(!n) return `<section><h2>Savings summary</h2><p class="empty">No entries yet. Add your first fuel entry to see savings.</p></section>`;
+    if(!n) return `<section><h2>Savings summary</h2><p class="empty">No entries yet. Add your first fuel entry to see savings.</p>
+      <button class="btn" data-view="entry">Add fuel entry</button></section>`;
     const pct = t.gas ? t.save/t.gas*100 : 0;
     return `<section><h2>Savings summary</h2><div class="report" style="border:0;padding:0;margin:0"><table>
-      <tr><td>Entries</td><td>${n}</td></tr>
+      <tr class="key"><td>Cumulative savings</td><td class="save">${rs(t.save)}</td></tr>
+      <tr><td>Overall savings percentage</td><td class="save">${num(pct,1)}%</td></tr>
       <tr><td>Total distance on LPG</td><td>${num(t.km,1)} km</td></tr>
       <tr><td>Total cylinders</td><td>${num(t.cyl)} (${num(t.cyl*state.config.cylKg,1)} kg)</td></tr>
       <tr><td>Total LPG expense</td><td class="lpg">${rs(t.lpg)}</td></tr>
-      <tr><td>Gasoline it replaced</td><td>${num(t.litres)} L</td></tr>
       <tr><td>Equivalent gasoline expense</td><td class="petrol">${rs(t.gas)}</td></tr>
-      <tr><td>Cumulative savings</td><td class="save">${rs(t.save)}</td></tr>
-      <tr><td>Overall savings percentage</td><td class="save">${num(pct,1)}%</td></tr>
+      <tr><td>Gasoline it replaced</td><td>${num(t.litres)} L</td></tr>
       <tr><td>Average cost per km on LPG</td><td class="lpg">${rs(t.km?t.lpg/t.km:0)}</td></tr>
       <tr><td>Average cost per km on gasoline</td><td class="petrol">${rs(t.km?t.gas/t.km:0)}</td></tr>
       <tr><td>Average distance per cylinder</td><td>${num(t.cyl?t.km/t.cyl:0,1)} km</td></tr>
+      <tr><td>Entries</td><td>${n}</td></tr>
     </table></div></section>`;
   },
   history(){
-    if(!state.entries.length) return `<section><h2>Fuel history</h2><p class="empty">No entries yet. Choose “New fuel entry” to add one.</p></section>`;
+    if(!state.entries.length) return `<section><h2>Fuel history</h2><p class="empty">No entries yet.</p>
+      <button class="btn" data-view="entry">Add fuel entry</button></section>`;
     let run = 0;
-    const rows = state.entries.map(e=>{ const c=calc(e); run+=c.savings; return {e,c,run}; }).reverse()
-      .map(({e,c,run})=>`<tr><td>${new Date(e.date).toLocaleDateString("en-GB")}</td><td>${num(e.cyl)}</td><td>${num(e.km,1)}</td>
+    const list = state.entries.map(e=>{ const c=calc(e); run+=c.savings; return {e,c,run}; }).reverse();
+    const date = e => new Date(e.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+    const rows = list.map(({e,c,run})=>`<tr><td>${date(e)}</td><td>${num(e.cyl)}</td><td>${num(e.km,1)}</td>
         <td class="lpg">${rs(c.lpgCost)}</td><td class="petrol">${rs(c.gasCost)}</td>
         <td class="${c.savings>=0?'save':'neg'}">${rs(c.savings)}</td><td>${rs(run)}</td>
-        <td><button class="del" data-id="${e.id}" aria-label="Delete entry">Delete</button></td></tr>`).join("");
-    return `<section><h2>Fuel history</h2><div class="tablewrap"><table class="hist">
+        <td><button class="del" data-id="${e.id}">Delete</button></td></tr>`).join("");
+    const cards = list.map(({e,c,run})=>`<li>
+        <div class="top"><span class="saved ${c.savings>=0?'save':'neg'}">${rs(c.savings)}</span><span class="meta">${date(e)}</span></div>
+        <div class="meta">${num(e.cyl)} cylinder${e.cyl===1?'':'s'}, ${num(e.km,1)} km${e.vehicle?`, ${esc(e.vehicle)}`:''}</div>
+        <dl><div><dt>LPG</dt><dd class="lpg">${rs(c.lpgCost)}</dd></div>
+            <div><dt>Gasoline</dt><dd class="petrol">${rs(c.gasCost)}</dd></div>
+            <div><dt>Cost per km</dt><dd>${rs(c.lpgPerKm)}</dd></div>
+            <div><dt>Running total</dt><dd>${rs(run)}</dd></div></dl>
+        <button class="del" data-id="${e.id}">Delete entry</button></li>`).join("");
+    return `<section><h2>Fuel history</h2>
+      <div class="tablewrap"><table class="hist">
       <tr><th>Date</th><th>Cyl.</th><th>km</th><th>LPG</th><th>Gasoline</th><th>Saved</th><th>Running total</th><th></th></tr>
       ${rows}</table></div>
-      <p class="hint">Each entry keeps the prices in force when it was saved, so updating prices never changes past results.</p></section>`;
+      <ul class="cards">${cards}</ul>
+      <p class="hint">Each entry keeps the prices and consumption in force when it was saved, so later updates never change past results.</p></section>`;
+  },
+  more(){
+    const c = state.config;
+    const item = (v,t,s) => `<li><button data-view="${v}"><span>${t}<span class="sub">${s}</span></span><span class="chev">›</span></button></li>`;
+    return `<section><h2>More</h2><ul class="list">
+      ${item("prices","Update fuel prices",`LPG ${rs(c.lpgPrice)} per cylinder, gasoline ${rs(c.gasPrice)}/L`)}
+      ${item("vehicle","Update vehicle",`${esc(vehicleLabel())}, ${num(c.kmPerL,1)} km/L`)}
+      ${item("storage","Storage & sync", gh ? `Syncing to ${esc(gh.owner)}/${esc(gh.repo)}` : "Saved on this device only")}
+      ${item("reset","Reset tracking",`${state.entries.length} entries recorded`)}
+    </ul></section>`;
   },
   prices(){
     const c = state.config;
-    return `<section><h2>Update fuel prices</h2>
-      <div class="grid2">
-        <div><label for="lpgPrice">LPG cylinder price (Rs)</label><input id="lpgPrice" type="number" step="0.01" value="${c.lpgPrice}"></div>
-        <div><label for="cylKg">Cylinder capacity (kg)</label><input id="cylKg" type="number" step="0.1" value="${c.cylKg}"></div>
-        <div><label for="gasPrice">Gasoline price (Rs per litre)</label><input id="gasPrice" type="number" step="0.01" value="${c.gasPrice}"></div>
-      </div>
+    return `<section>${back()}<h2>Update fuel prices</h2>
+      <label for="lpgPrice">LPG cylinder price (Rs)</label><input id="lpgPrice" type="number" inputmode="decimal" step="0.01" value="${c.lpgPrice}">
+      <label for="cylKg">Cylinder capacity (kg)</label><input id="cylKg" type="number" inputmode="decimal" step="0.1" value="${c.cylKg}">
+      <label for="gasPrice">Gasoline price (Rs per litre)</label><input id="gasPrice" type="number" inputmode="decimal" step="0.01" value="${c.gasPrice}">
       <button class="btn" id="savePrices">Save prices</button>
       <p class="hint">New prices apply to future entries only.</p></section>`;
   },
-  consumption(){
-    return `<section><h2>Update vehicle consumption</h2>
+  vehicle(){
+    const c = state.config;
+    return `<section>${back()}<h2>Update vehicle</h2>
+      <label for="vName">Make and model</label><input id="vName" autocomplete="off" value="${esc(c.vehicleName)}" placeholder="e.g. Honda Fit GK3">
+      <div class="grid2">
+        <div><label for="vYear">Year</label><input id="vYear" inputmode="numeric" maxlength="4" value="${esc(c.vehicleYear)}" placeholder="e.g. 2015"></div>
+        <div><label for="vEngine">Engine</label><input id="vEngine" autocomplete="off" value="${esc(c.vehicleEngine)}" placeholder="e.g. L13B"></div>
+      </div>
       <label for="kmPerL">Average gasoline consumption (km/L)</label>
-      <input id="kmPerL" type="number" step="0.1" value="${state.config.kmPerL}">
-      <button class="btn" id="saveCons">Save consumption</button>
-      <p class="hint">Applies to future entries only.</p></section>`;
+      <input id="kmPerL" type="number" inputmode="decimal" step="0.1" value="${c.kmPerL}">
+      <button class="btn" id="saveVehicle">Save vehicle</button>
+      <p class="hint">Consumption applies to future entries only. Past entries keep the figure used when they were saved.</p></section>`;
+  },
+  storage(){
+    const g = gh || {owner:"",repo:"",path:"data.json",branch:"main",token:""};
+    return `<section>${back()}<h2>Storage &amp; sync</h2>
+      <p class="hint">Records are always saved in this browser. Connect a private GitHub repository to back them up and use them on your phone and computer. Records are saved to a <code>data.json</code> file there.</p>
+      <div class="grid2">
+        <div><label for="ghOwner">GitHub username</label><input id="ghOwner" autocapitalize="off" autocorrect="off" value="${esc(g.owner)}" placeholder="your-username"></div>
+        <div><label for="ghRepo">Repository</label><input id="ghRepo" autocapitalize="off" autocorrect="off" value="${esc(g.repo)}" placeholder="fuel-data"></div>
+        <div><label for="ghPath">File path</label><input id="ghPath" autocapitalize="off" value="${esc(g.path)}"></div>
+        <div><label for="ghBranch">Branch</label><input id="ghBranch" autocapitalize="off" value="${esc(g.branch)}"></div>
+      </div>
+      <label for="ghToken">Access token <span class="hint">(stored only on this device)</span></label>
+      <input id="ghToken" type="password" autocomplete="off" value="${esc(g.token)}" placeholder="github_pat_…">
+      <button class="btn" id="ghSave">${gh?"Save and sync":"Connect and sync"}</button>
+      ${gh?`<button class="btn ghost" id="ghPull">Load from GitHub</button> <button class="btn ghost" id="ghOff">Disconnect</button>`:""}
+      <h2 style="margin-top:24px">Backup file</h2>
+      <button class="btn ghost" id="exportBtn">Download backup</button>
+      <label class="btn ghost" style="display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-top:16px">Restore backup
+        <input type="file" id="importFile" accept="application/json,.json" hidden></label>
+    </section>`;
   },
   reset(){
-    return `<section><h2>Reset tracking</h2>
-      <p>This deletes all ${state.entries.length} entries and restores the default prices and consumption. Download a backup first if you might need them.</p>
-      <label for="confirmTxt">Type RESET to confirm</label><input id="confirmTxt" autocomplete="off">
+    return `<section>${back()}<h2>Reset tracking</h2>
+      <p>This deletes all ${state.entries.length} entries and restores the default prices and vehicle. Download a backup first if you might need them.</p>
+      <label for="confirmTxt">Type RESET to confirm</label><input id="confirmTxt" autocomplete="off" autocapitalize="characters">
       <button class="btn danger" id="doReset">Delete all records</button></section>`;
   }
 };
 
 function show(name, msg){
-  document.querySelectorAll("#menu button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===name));
-  document.getElementById("view").innerHTML = views[name]();
+  current = name;
+  const tab = MORE_VIEWS.includes(name) ? "more" : name;
+  document.querySelectorAll("nav.menu button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===name));
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===tab));
+  $("#view").innerHTML = views[name]();
   bind[name] && bind[name]();
   refreshPump();
-  if(msg) setStatus(msg);
+  if(msg) toast(msg);
+  window.scrollTo({top:0});
 }
+// delegated navigation for every [data-view] button
+document.addEventListener("click", e=>{
+  const b = e.target.closest("[data-view]"); if(b) show(b.dataset.view);
+});
+$("#vehicle")?.addEventListener("click", ()=>show("vehicle"));
+
+const pick = () => ({lpgPrice:state.config.lpgPrice, gasPrice:state.config.gasPrice, kmPerL:state.config.kmPerL, vehicle:vehicleLabel()});
 
 const bind = {
   entry(){
@@ -274,16 +403,21 @@ const bind = {
     const upd = () => {
       const v = read(), okC = v.cyl>0, okK = v.km>0;
       btn.disabled = !(okC && okK);
+      document.querySelectorAll(".chip").forEach(ch=>ch.setAttribute("aria-pressed", parseFloat(ch.dataset.cyl)===v.cyl));
       if(okC && okK) pv.innerHTML = `<div class="report">${reportTable({...v, ...pick()})}</div>`;
       else if(okC || okK) pv.innerHTML = `<p class="hint" style="margin-top:12px">Now enter the ${okC?'kilometres travelled':'number of cylinders used'}.</p>`;
       else pv.innerHTML = "";
     };
-    cyl.oninput = km.oninput = upd; cyl.focus();
+    cyl.oninput = km.oninput = upd;
+    document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{ cyl.value = ch.dataset.cyl; upd(); km.focus(); });
+    cyl.onkeydown = e => { if(e.key==="Enter"){ e.preventDefault(); km.focus(); } };
+    km.onkeydown = e => { if(e.key==="Enter"){ e.preventDefault(); km.blur(); if(!btn.disabled) btn.click(); } };
+    if(window.matchMedia("(min-width:641px)").matches) cyl.focus();
     btn.onclick = () => {
       const v = read(); if(!(v.cyl>0 && v.km>0)) return;
       state.entries.push({id:Date.now().toString(36), date:new Date().toISOString(), ...v, ...pick()});
       persist(); const c = calc(state.entries.at(-1));
-      show("summary", `Entry saved. You saved ${rs(c.savings)} on this trip.`);
+      show("summary", `Entry saved. You saved ${rs(c.savings)} on this one.`);
     };
   },
   history(){
@@ -295,28 +429,52 @@ const bind = {
   prices(){
     $("#savePrices").onclick = () => {
       const l=parseFloat($("#lpgPrice").value), g=parseFloat($("#gasPrice").value), k=parseFloat($("#cylKg").value);
-      if(!(l>0&&g>0&&k>0)) return setStatus("Enter prices and capacity greater than zero.");
+      if(!(l>0&&g>0&&k>0)) return toast("Enter prices and capacity greater than zero.");
       Object.assign(state.config,{lpgPrice:l,gasPrice:g,cylKg:k}); persist(); show("entry","Prices updated.");
     };
   },
-  consumption(){
-    $("#saveCons").onclick = () => {
-      const v=parseFloat($("#kmPerL").value);
-      if(!(v>0)) return setStatus("Enter a consumption greater than zero.");
-      state.config.kmPerL=v; persist(); show("entry","Consumption updated.");
+  vehicle(){
+    $("#saveVehicle").onclick = () => {
+      const name=$("#vName").value.trim(), kml=parseFloat($("#kmPerL").value);
+      if(!name) return toast("Enter the make and model.");
+      if(!(kml>0)) return toast("Enter a consumption greater than zero.");
+      Object.assign(state.config,{vehicleName:name, vehicleYear:$("#vYear").value.trim(), vehicleEngine:$("#vEngine").value.trim(), kmPerL:kml});
+      persist(); show("entry","Vehicle updated.");
+    };
+  },
+  storage(){
+    $("#ghSave").onclick = connectGh;
+    $("#ghPull") && ($("#ghPull").onclick = pull);
+    $("#ghOff") && ($("#ghOff").onclick = () => { gh=null; try{localStorage.removeItem(LS_GH);}catch(e){}
+      setSync("Saved on this device."); show("storage","Disconnected. Records stay on this device."); });
+    $("#exportBtn").onclick = () => {
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));
+      a.download="lpg-tracker-backup-"+new Date().toISOString().slice(0,10)+".json"; a.click();
+    };
+    $("#importFile").onchange = async ev => {
+      const f=ev.target.files[0]; if(!f) return;
+      try{ const d=JSON.parse(await f.text());
+        if(!d.config||!Array.isArray(d.entries)) throw 0;
+        if(!confirm("Replace current records with "+d.entries.length+" entries from the backup?")) return;
+        state=normalise(d); persist(); show("summary","Backup restored.");
+      }catch(e){ toast("That file is not a valid tracker backup."); }
+      ev.target.value="";
     };
   },
   reset(){
     $("#doReset").onclick = () => {
-      if($("#confirmTxt").value.trim()!=="RESET") return setStatus("Type RESET in the box to confirm.");
+      if($("#confirmTxt").value.trim().toUpperCase()!=="RESET") return toast("Type RESET in the box to confirm.");
       state = {config:{...DEFAULTS}, entries:[]}; persist(); show("entry","All records deleted. Defaults restored.");
     };
   }
 };
 
-const pick = () => ({lpgPrice:state.config.lpgPrice, gasPrice:state.config.gasPrice, kmPerL:state.config.kmPerL});
-const $ = s => document.querySelector(s);
-function setStatus(t){ $("#status").textContent = t; }
+function $(s){ return document.querySelector(s); }
+let toastTimer;
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on");
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove("on"), 3200); }
+function setSync(t){ $("#syncState").textContent = t; }
 
 /* ---------- GitHub storage ---------- */
 const b64enc = s => btoa(unescape(encodeURIComponent(s)));
@@ -331,78 +489,53 @@ async function ghGet(){
   const j = await r.json(); return {sha:j.sha, data:JSON.parse(b64dec(j.content))};
 }
 async function ghPut(){
-  let sha; try{ const cur = await ghGet(); sha = cur && cur.sha; }catch(e){ throw e; }
+  const cur = await ghGet();
   const body = {message:"Update fuel records "+new Date().toISOString(), content:b64enc(JSON.stringify(state,null,2)), branch:gh.branch};
-  if(sha) body.sha = sha;
+  if(cur && cur.sha) body.sha = cur.sha;
   const r = await fetch(ghUrl(), {method:"PUT", headers:{...ghHeaders(),"Content-Type":"application/json"}, body:JSON.stringify(body)});
   if(!r.ok) throw new Error("GitHub save failed (" + r.status + ")");
 }
 let pushing = Promise.resolve();
 function persist(){
   saveLocal(); refreshPump();
-  if(!gh) return;
-  pushing = pushing.then(()=>ghPut()).then(()=>setStatus("Saved to GitHub at "+new Date().toLocaleTimeString()))
-    .catch(e=>setStatus("Saved on this device. "+e.message+". It will retry on your next change."));
+  if(!gh){ setSync("Saved on this device."); return; }
+  setSync("Saving to GitHub…");
+  pushing = pushing.then(()=>ghPut()).then(()=>setSync("Synced to GitHub at "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})+"."))
+    .catch(e=>{ setSync("Saved on this device. GitHub sync failed."); toast(e.message+". It will retry on your next change."); });
 }
 async function pull(){
   if(!gh) return;
-  setStatus("Loading records from GitHub…");
+  setSync("Loading from GitHub…");
   try{
     const r = await ghGet();
-    if(r && r.data && Array.isArray(r.data.entries)){ state = r.data; saveLocal(); show("entry","Records loaded from GitHub."); }
-    else { await ghPut(); setStatus("Connected. Created "+gh.path+" in your repository."); }
-  }catch(e){ setStatus("Could not reach GitHub: "+e.message+". Using records saved on this device."); }
+    if(r && r.data && Array.isArray(r.data.entries)){ state = normalise(r.data); saveLocal(); show(current); setSync("Synced with GitHub."); }
+    else { await ghPut(); setSync("Synced with GitHub."); }
+  }catch(e){ setSync("Saved on this device. GitHub unreachable."); toast("Could not reach GitHub: "+e.message); }
 }
-
-function fillGhForm(){
-  if(!gh) return;
-  $("#ghOwner").value=gh.owner; $("#ghRepo").value=gh.repo; $("#ghPath").value=gh.path; $("#ghBranch").value=gh.branch; $("#ghToken").value=gh.token;
-}
-$("#ghSave").onclick = async () => {
+async function connectGh(){
   const g = {owner:$("#ghOwner").value.trim(), repo:$("#ghRepo").value.trim(), path:$("#ghPath").value.trim()||"data.json",
              branch:$("#ghBranch").value.trim()||"main", token:$("#ghToken").value.trim()};
-  if(!g.owner||!g.repo||!g.token) return setStatus("Enter your username, repository and token.");
+  if(!g.owner||!g.repo||!g.token) return toast("Enter your username, repository and token.");
   gh = g; try{ localStorage.setItem(LS_GH, JSON.stringify(gh)); }catch(e){}
   try{ const r = await ghGet();
     if(r && r.data && r.data.entries && r.data.entries.length && state.entries.length &&
        !confirm("GitHub already has "+r.data.entries.length+" entries. OK = load them (replaces this device's records). Cancel = upload this device's records instead.")){
-      await ghPut(); return setStatus("This device's records uploaded to GitHub.");
+      await ghPut(); setSync("Synced with GitHub."); return show("storage","This device's records uploaded to GitHub.");
     }
-    if(r && r.data && Array.isArray(r.data.entries)){ state=r.data; saveLocal(); show("entry","Connected. Records loaded from GitHub."); }
-    else { await ghPut(); setStatus("Connected. Created "+gh.path+" in your repository."); }
-  }catch(e){ setStatus("Could not connect: "+e.message); }
-};
-$("#ghPull").onclick = () => gh ? pull() : setStatus("Connect a repository first.");
-$("#ghOff").onclick = () => { gh=null; try{localStorage.removeItem(LS_GH);}catch(e){}
-  ["#ghOwner","#ghRepo","#ghToken"].forEach(s=>$(s).value=""); setStatus("Disconnected. Records stay on this device."); };
+    if(r && r.data && Array.isArray(r.data.entries)){ state=normalise(r.data); saveLocal(); setSync("Synced with GitHub."); show("summary","Connected. Records loaded from GitHub."); }
+    else { await ghPut(); setSync("Synced with GitHub."); show("storage","Connected. Created "+gh.path+" in your repository."); }
+  }catch(e){ toast("Could not connect: "+e.message); }
+}
 
-/* ---------- Backup ---------- */
-$("#exportBtn").onclick = () => {
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));
-  a.download="lpg-tracker-backup-"+new Date().toISOString().slice(0,10)+".json"; a.click();
-};
-$("#importFile").onchange = async ev => {
-  const f=ev.target.files[0]; if(!f) return;
-  try{ const d=JSON.parse(await f.text());
-    if(!d.config||!Array.isArray(d.entries)) throw 0;
-    if(!confirm("Replace current records with "+d.entries.length+" entries from the backup?")) return;
-    state=d; persist(); show("summary","Backup restored.");
-  }catch(e){ setStatus("That file is not a valid tracker backup."); }
-  ev.target.value="";
-};
-
-/* ---------- Menu + keyboard shortcuts 1–6 ---------- */
-document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>show(b.dataset.view));
-const order=["entry","summary","history","prices","consumption","reset"];
+/* ---------- keyboard shortcuts 1–6 on desktop ---------- */
+const order=["entry","summary","history","prices","vehicle","reset"];
 document.addEventListener("keydown",e=>{
   if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) return;
   const i=parseInt(e.key,10); if(i>=1&&i<=6) show(order[i-1]);
 });
 
-fillGhForm();
 show("entry");
-pull();
+if(gh) pull();
 </script>
 </body>
 </html>
