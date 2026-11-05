@@ -35,9 +35,8 @@ html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:10
 body{margin:0;background:var(--bg);color:var(--ink);
   font:16px/1.5 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-.wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px}
+.wrap{max-width:780px;margin:0 auto;padding:16px 16px 48px}
 header h1{font:700 1.9rem/1.1 "Barlow Condensed","Arial Narrow",sans-serif;margin:8px 0 2px}
-header p{margin:0;color:var(--muted)}
 .vehbtn{background:none;border:0;padding:4px 0;margin:0;font:inherit;color:var(--muted);cursor:pointer;text-align:left;
   text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 
@@ -47,12 +46,13 @@ header p{margin:0;color:var(--muted)}
 .pump .lbl{color:#8FB89A;font-size:.85rem}
 .pump .big{font:700 clamp(2.4rem,11vw,3.6rem)/1.05 "Barlow Condensed",sans-serif;
   color:var(--display-ink);text-shadow:0 0 12px rgba(124,255,160,.45);letter-spacing:.02em;word-break:break-word}
+.pump .big.loss{color:#FF9C8F;text-shadow:0 0 12px rgba(255,120,100,.45)}
 .pump .row{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:4px 28px;margin-top:10px;color:#BFE8CB;font-size:.85rem}
 .pump .row b{display:block;color:var(--display-ink);font-weight:600;font-size:1.05rem}
 
 /* desktop menu */
-nav.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
-nav.menu button{font:600 .95rem "Barlow",sans-serif;padding:12px 10px;border-radius:10px;min-height:56px;
+nav.menu{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+nav.menu button{font:600 .95rem "Barlow",sans-serif;padding:10px;border-radius:10px;min-height:56px;
   border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
 nav.menu button .n{display:block;font-size:.75rem;color:var(--muted);font-weight:500}
 nav.menu button[aria-current="true"]{border-color:var(--lpg);box-shadow:0 0 0 1px var(--lpg)}
@@ -63,10 +63,9 @@ nav.tabs{display:none}
   nav.menu{display:none}
   .wrap{padding:12px 14px calc(var(--tabbar-h) + 32px)}
   header h1{font-size:1.6rem}
-  nav.tabs{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:20;
-    background:var(--surface);border-top:1px solid var(--line);
-    padding:0 4px env(safe-area-inset-bottom,0px)}
-  nav.tabs button{background:none;border:0;color:var(--muted);font:600 .72rem "Barlow",sans-serif;
+  nav.tabs{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:var(--surface);border-top:1px solid var(--line);padding:0 2px env(safe-area-inset-bottom,0px)}
+  nav.tabs button{background:none;border:0;color:var(--muted);font:600 .7rem/1.1 "Barlow",sans-serif;
     height:var(--tabbar-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer}
   nav.tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   nav.tabs button[aria-current="true"]{color:var(--lpg)}
@@ -75,7 +74,9 @@ nav.tabs{display:none}
 }
 
 section{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+section+section{margin-top:14px}
 section h2{font:700 1.35rem "Barlow Condensed",sans-serif;margin:0 0 8px}
+section h3{font:700 1.1rem "Barlow Condensed",sans-serif;margin:18px 0 6px}
 label{display:block;font-weight:600;margin:14px 0 6px}
 .hint{color:var(--muted);font-size:.85rem;font-weight:400}
 input,select{width:100%;font:500 16px/1.3 "Barlow",sans-serif;padding:12px 14px;min-height:50px;border-radius:10px;
@@ -84,6 +85,7 @@ input.big{font-size:1.5rem;font-weight:600;min-height:58px}
 input:focus,button:focus-visible,select:focus{outline:3px solid var(--lpg);outline-offset:1px}
 .btn{font:600 1rem "Barlow",sans-serif;padding:13px 20px;min-height:50px;border-radius:10px;border:0;cursor:pointer;
   background:var(--lpg);color:#fff;margin-top:16px}
+.btn.gas{background:var(--petrol);color:#1b1205}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .btn.danger{background:var(--danger);color:#fff}
@@ -95,21 +97,28 @@ input:focus,button:focus-visible,select:focus{outline:3px solid var(--lpg);outli
   background:var(--surface);color:var(--ink);cursor:pointer}
 .chip[aria-pressed="true"]{border-color:var(--lpg);color:var(--lpg)}
 
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.seg button{font:600 .95rem "Barlow",sans-serif;padding:9px 18px;min-height:42px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.seg button[aria-current="true"]{background:var(--lpg);color:#fff}
+
 .report{margin-top:18px;border-top:1px dashed var(--line);padding-top:12px}
+.report.flat{border:0;padding:0;margin:0}
 .report table{width:100%;border-collapse:collapse}
 .report td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:top}
 .report td:last-child{text-align:right;font-weight:600;padding-left:12px;white-space:nowrap}
 .report tr.key td{font-size:1.15rem}
+.report tr.sub td:first-child{padding-left:12px;color:var(--muted)}
 .lpg{color:var(--lpg)} .petrol{color:var(--petrol)} .save{color:var(--save)} .neg{color:var(--danger)}
 
-/* history: table on wide screens, cards on phones */
+/* history */
 .tablewrap{overflow-x:auto}
 .hist{width:100%;border-collapse:collapse}
 .hist th,.hist td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-size:.92rem}
-.hist th:first-child,.hist td:first-child{text-align:left}
+.hist th:first-child,.hist td:first-child,.hist td.type,.hist th.type{text-align:left}
 .hist th{color:var(--muted);font-weight:600}
 .cards{display:none;list-style:none;margin:0;padding:0}
-.cards li{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.cards li{border:1px solid var(--line);border-left:4px solid var(--lpg);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.cards li.refill{border-left-color:var(--petrol)}
 .cards .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .cards .saved{font:700 1.4rem "Barlow Condensed",sans-serif}
 .cards .meta{color:var(--muted);font-size:.9rem}
@@ -118,6 +127,27 @@ input:focus,button:focus-visible,select:focus{outline:3px solid var(--lpg);outli
 .cards dd{margin:0;font-weight:600}
 @media (max-width:640px){.tablewrap{display:none}.cards{display:block}}
 .del{background:none;border:0;color:var(--danger);cursor:pointer;font:600 .9rem "Barlow",sans-serif;padding:8px 0;min-height:40px}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;padding:1px 8px;border-radius:10px;border:1px solid currentColor}
+
+/* monthly */
+.months{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+@media (max-width:640px){.months{grid-template-columns:1fr}}
+.month{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.month .head{display:flex;justify-content:space-between;align-items:baseline}
+.month .name{font-weight:700}
+.month .net{font:700 1.5rem "Barlow Condensed",sans-serif}
+.month table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:6px}
+.month td{padding:4px 0;border-bottom:1px solid var(--line)}
+.month td:last-child{text-align:right;font-weight:600}
+.month tr:last-child td{border-bottom:0}
+
+/* charts */
+.chart{max-width:600px;margin:4px 0 6px}
+.chart svg{width:100%;height:auto;display:block}
+.chart .ax{fill:var(--muted);font:500 11px "Barlow",sans-serif}
+.chart .val{font:600 10px "Barlow",sans-serif}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 
 /* "more" list */
 .list{list-style:none;margin:0;padding:0}
@@ -152,22 +182,24 @@ code{font-size:.9em}
   </header>
 
   <div class="pump" aria-live="polite">
-    <div class="lbl">Total saved with LPG</div>
+    <div class="lbl" id="pumpLbl">Net saved with LPG</div>
     <div class="big" id="pumpTotal">Rs 0.00</div>
     <div class="row">
       <span>Distance<b id="pumpKm">0 km</b></span>
-      <span>Cylinders<b id="pumpCyl">0</b></span>
-      <span>Entries<b id="pumpN">0</b></span>
+      <span>LPG spent<b id="pumpLpg">Rs 0</b></span>
+      <span>Gasoline refills<b id="pumpGas">Rs 0</b></span>
     </div>
   </div>
 
   <nav class="menu" aria-label="Main menu">
-    <button data-view="entry"><span class="n">1</span>New fuel entry</button>
-    <button data-view="summary"><span class="n">2</span>Savings summary</button>
-    <button data-view="history"><span class="n">3</span>Fuel history</button>
-    <button data-view="prices"><span class="n">4</span>Update fuel prices</button>
-    <button data-view="vehicle"><span class="n">5</span>Update vehicle</button>
-    <button data-view="reset"><span class="n">6</span>Reset tracking</button>
+    <button data-view="entry"><span class="n">1</span>New LPG entry</button>
+    <button data-view="refill"><span class="n">2</span>Gasoline refill</button>
+    <button data-view="summary"><span class="n">3</span>Savings summary</button>
+    <button data-view="monthly"><span class="n">4</span>Monthly summary</button>
+    <button data-view="history"><span class="n">5</span>Fuel history</button>
+    <button data-view="prices"><span class="n">6</span>Update fuel prices</button>
+    <button data-view="vehicle"><span class="n">7</span>Update vehicle</button>
+    <button data-view="reset"><span class="n">8</span>Reset tracking</button>
   </nav>
 
   <main id="view"></main>
@@ -177,7 +209,8 @@ code{font-size:.9em}
 </div>
 
 <nav class="tabs" aria-label="Main menu">
-  <button data-view="entry"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>New entry</button>
+  <button data-view="entry"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>LPG entry</button>
+  <button data-view="refill"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z"/></svg>Gas refill</button>
   <button data-view="summary"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Summary</button>
   <button data-view="history"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>History</button>
   <button data-view="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>More</button>
@@ -190,33 +223,42 @@ const DEFAULTS = {vehicleName:"Honda Fit GK3", vehicleYear:"2015", vehicleEngine
                   kmPerL:14, cylKg:12, lpgPrice:250, gasPrice:77.70};
 const LS_DATA = "lpgTracker.data", LS_GH = "lpgTracker.github";
 const MORE_VIEWS = ["prices","vehicle","reset","storage"];
+const SUMMARY_VIEWS = ["summary","monthly"];
 let state = load();
 let gh = loadGh();
 let current = "entry";
+let histFilter = "all";
 
 function normalise(d){
   const c = {...DEFAULTS, ...(d.config||{})};
-  // migrate older single-string vehicle field
   if(d.config && d.config.vehicle && !d.config.vehicleName && d.config.vehicle !== "Honda Fit GK3 2015 (L13B)"){
     c.vehicleName = d.config.vehicle; c.vehicleYear = ""; c.vehicleEngine = "";
   }
   delete c.vehicle;
-  return {config:c, entries:Array.isArray(d.entries)?d.entries:[]};
+  return {config:c, entries:Array.isArray(d.entries)?d.entries:[], refills:Array.isArray(d.refills)?d.refills:[]};
 }
 function load(){
   try{ const d = JSON.parse(localStorage.getItem(LS_DATA)); if(d && d.config) return normalise(d); }catch(e){}
-  return {config:{...DEFAULTS}, entries:[]};
+  return {config:{...DEFAULTS}, entries:[], refills:[]};
 }
 function loadGh(){ try{ return JSON.parse(localStorage.getItem(LS_GH)) || null; }catch(e){ return null; } }
 function saveLocal(){ try{ localStorage.setItem(LS_DATA, JSON.stringify(state)); }catch(e){} }
 
 const esc = s => String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const rs = n => "Rs " + n.toLocaleString("en-MU",{minimumFractionDigits:2,maximumFractionDigits:2});
+const rs = n => (n<0?"−":"") + "Rs " + Math.abs(n).toLocaleString("en-MU",{minimumFractionDigits:2,maximumFractionDigits:2});
+const rs0 = n => (n<0?"−":"") + "Rs " + Math.abs(n).toLocaleString("en-MU",{maximumFractionDigits:0});
 const num = (n,d=2) => n.toLocaleString("en-MU",{maximumFractionDigits:d});
+const cls = n => n>=0 ? "save" : "neg";
+const fmtDT = iso => new Date(iso).toLocaleString("en-GB",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+const monthKey = iso => { const d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); };
+const monthName = (k,short) => new Date(+k.slice(0,4), +k.slice(5)-1, 1).toLocaleDateString("en-GB",short?{month:"short"}:{month:"long",year:"numeric"});
+function nowLocal(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
+function readDT(id){ const v=$(id).value; const d=v?new Date(v):new Date(); return isNaN(d)?new Date().toISOString():d.toISOString(); }
 function vehicleLabel(c=state.config){
   return [c.vehicleName, c.vehicleYear].filter(Boolean).join(" ") + (c.vehicleEngine ? ` (${c.vehicleEngine})` : "");
 }
 
+/* ---------- calculations ---------- */
 function calc(e){
   const lpgCost = e.cyl * e.lpgPrice;
   const litres = e.km / e.kmPerL;
@@ -228,27 +270,43 @@ function calc(e){
     gasPerKm: e.km ? gasCost / e.km : 0,
     kmPerCyl: e.cyl ? e.km / e.cyl : 0 };
 }
+function blank(){ return {km:0,cyl:0,lpg:0,gas:0,gross:0,litres:0,refill:0,refillL:0,nRefill:0,nEntry:0}; }
+function addEntry(t,e){ const c=calc(e); t.km+=e.km; t.cyl+=e.cyl; t.lpg+=c.lpgCost; t.gas+=c.gasCost; t.gross+=c.savings; t.litres+=c.litres; t.nEntry++; }
+function addRefill(t,r){ t.refill+=r.amount; t.refillL+=r.amount/r.gasPrice; t.nRefill++; }
+function finish(t){
+  t.actual = t.lpg + t.refill;          // what you really paid
+  t.net = t.gas - t.actual;             // vs running on gasoline only
+  t.pct = t.gas ? t.net / t.gas * 100 : 0;
+  return t;
+}
 function totals(){
-  return state.entries.reduce((t,e)=>{ const c=calc(e);
-    t.km+=e.km; t.cyl+=e.cyl; t.lpg+=c.lpgCost; t.gas+=c.gasCost; t.save+=c.savings; t.litres+=c.litres; return t;
-  },{km:0,cyl:0,lpg:0,gas:0,save:0,litres:0});
+  const t = blank(); state.entries.forEach(e=>addEntry(t,e)); state.refills.forEach(r=>addRefill(t,r)); return finish(t);
+}
+function monthly(){
+  const m = {};
+  const get = k => m[k] || (m[k] = Object.assign(blank(), {key:k}));
+  state.entries.forEach(e=>addEntry(get(monthKey(e.date)), e));
+  state.refills.forEach(r=>addRefill(get(monthKey(r.date)), r));
+  return Object.values(m).map(finish).sort((a,b)=>a.key.localeCompare(b.key));
 }
 
 function refreshPump(){
   const t = totals();
-  $("#pumpTotal").textContent = rs(t.save);
+  $("#pumpTotal").textContent = rs(t.net);
+  $("#pumpTotal").classList.toggle("loss", t.net < 0);
+  $("#pumpLbl").textContent = t.net < 0 ? "Net loss so far" : "Net saved with LPG";
   $("#pumpKm").textContent = num(t.km,1) + " km";
-  $("#pumpCyl").textContent = num(t.cyl);
-  $("#pumpN").textContent = state.entries.length;
+  $("#pumpLpg").textContent = rs0(t.lpg);
+  $("#pumpGas").textContent = rs0(t.refill);
   $("#vehicle").textContent = `${vehicleLabel()}, ${num(state.config.kmPerL,1)} km/L`;
   document.title = "LPG Savings – " + (state.config.vehicleName || "My car");
 }
 
 function reportTable(e){
-  const c = calc(e), cls = c.savings>=0?'save':'neg';
+  const c = calc(e);
   return `<table>
-    <tr class="key"><td>Savings</td><td class="${cls}">${rs(c.savings)}</td></tr>
-    <tr><td>Savings percentage</td><td class="${cls}">${num(c.pct,1)}%</td></tr>
+    <tr class="key"><td>LPG savings on this trip</td><td class="${cls(c.savings)}">${rs(c.savings)}</td></tr>
+    <tr><td>Savings percentage</td><td class="${cls(c.savings)}">${num(c.pct,1)}%</td></tr>
     <tr><td>LPG expense</td><td class="lpg">${rs(c.lpgCost)}</td></tr>
     <tr><td>Equivalent gasoline expense</td><td class="petrol">${rs(c.gasCost)}</td></tr>
     <tr><td>Equivalent gasoline</td><td>${num(c.litres)} L</td></tr>
@@ -258,10 +316,49 @@ function reportTable(e){
   </table>`;
 }
 const back = () => `<button class="back" data-view="more">‹ More</button>`;
+const seg = active => `<div class="seg" role="tablist">
+  <button data-view="summary" aria-current="${active==='summary'}">Overall</button>
+  <button data-view="monthly" aria-current="${active==='monthly'}">Monthly</button></div>`;
 
+/* ---------- charts (inline SVG, no libraries) ---------- */
+function chartNet(ms){
+  const W=400,H=200,L=46,R=8,T=14,B=26, pw=W-L-R, ph=H-T-B, n=ms.length;
+  const vals=ms.map(m=>m.net), hi=Math.max(0,...vals), lo=Math.min(0,...vals), span=(hi-lo)||1;
+  const y=v=>T+(hi-v)/span*ph, slot=pw/n, bw=Math.min(36,slot*.62);
+  let s=`<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
+  [hi,0,lo].filter((v,i,a)=>a.indexOf(v)===i).forEach(v=>s+=`<text class="ax" x="${L-6}" y="${y(v)+4}" text-anchor="end">${rs0(v).replace("Rs ","")}</text>`);
+  ms.forEach((m,i)=>{
+    const x=L+slot*i+(slot-bw)/2, top=Math.min(y(m.net),y(0)), h=Math.max(1,Math.abs(y(m.net)-y(0)));
+    s+=`<rect x="${x}" y="${top}" width="${bw}" height="${h}" rx="3" fill="var(${m.net>=0?'--save':'--danger'})"><title>${monthName(m.key)}: ${rs(m.net)}</title></rect>`;
+    s+=`<text class="ax" x="${x+bw/2}" y="${H-8}" text-anchor="middle">${monthName(m.key,true)}</text>`;
+    if(n<=6) s+=`<text class="val" x="${x+bw/2}" y="${m.net>=0?top-4:top+h+11}" text-anchor="middle" fill="var(${m.net>=0?'--save':'--danger'})">${rs0(m.net).replace("Rs ","")}</text>`;
+  });
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Net savings by month">${s}</svg></div>`;
+}
+function chartSpend(ms){
+  const W=400,H=200,L=46,R=8,T=10,B=26, pw=W-L-R, ph=H-T-B, n=ms.length;
+  const hi=Math.max(1,...ms.map(m=>Math.max(m.actual,m.gas)));
+  const y=v=>T+(1-v/hi)*ph, slot=pw/n, bw=Math.min(16,slot*.32);
+  let s=`<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
+  [hi,hi/2].forEach(v=>s+=`<text class="ax" x="${L-6}" y="${y(v)+4}" text-anchor="end">${rs0(v).replace("Rs ","")}</text>
+    <line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="2 3"/>`);
+  ms.forEach((m,i)=>{
+    const x=L+slot*i+(slot-2*bw-3)/2;
+    const hL=ph*m.lpg/hi, hR=ph*m.refill/hi, hG=ph*m.gas/hi;
+    s+=`<rect x="${x}" y="${y(0)-hL}" width="${bw}" height="${hL}" fill="var(--lpg)"><title>LPG ${rs(m.lpg)}</title></rect>`;
+    s+=`<rect x="${x}" y="${y(0)-hL-hR}" width="${bw}" height="${hR}" fill="var(--petrol)"><title>Gasoline refills ${rs(m.refill)}</title></rect>`;
+    s+=`<rect x="${x+bw+3}" y="${y(0)-hG}" width="${bw}" height="${hG}" fill="var(--muted)" opacity=".45"><title>Gasoline only ${rs(m.gas)}</title></rect>`;
+    s+=`<text class="ax" x="${x+bw+1.5}" y="${H-8}" text-anchor="middle">${monthName(m.key,true)}</text>`;
+  });
+  return `<div class="legend"><span><i style="background:var(--lpg)"></i>LPG</span><span><i style="background:var(--petrol)"></i>Gasoline refills</span>
+    <span><i style="background:var(--muted);opacity:.45"></i>Cost on gasoline only</span></div>
+    <div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly spending compared">${s}</svg></div>`;
+}
+
+/* ---------- views ---------- */
 const views = {
   entry(){
-    return `<section><h2>New fuel entry</h2>
+    return `<section><h2>New LPG entry</h2>
       <label for="cyl">LPG cylinders used</label>
       <input id="cyl" class="big" type="number" inputmode="decimal" min="0" step="0.01" enterkeyhint="next" placeholder="0">
       <div class="chips" role="group" aria-label="Quick cylinder amounts">
@@ -269,62 +366,115 @@ const views = {
       </div>
       <label for="km">Kilometres travelled</label>
       <input id="km" class="big" type="number" inputmode="decimal" min="0" step="0.1" enterkeyhint="done" placeholder="0">
+      <label for="eDate">Date and time</label>
+      <input id="eDate" type="datetime-local" value="${nowLocal()}">
       <div id="preview"></div>
-      <button class="btn" id="saveEntry" disabled>Save entry</button>
+      <button class="btn" id="saveEntry" disabled>Save LPG entry</button>
+    </section>`;
+  },
+  refill(){
+    const c = state.config, last = [...state.refills].sort((a,b)=>b.date.localeCompare(a.date))[0];
+    return `<section><h2>Gasoline refill</h2>
+      <p class="hint">Record the money spent on gasoline to keep the tank from running empty. It is subtracted from your LPG savings.</p>
+      <label for="amt">Amount paid (Rs)</label>
+      <input id="amt" class="big" type="number" inputmode="decimal" min="0" step="1" enterkeyhint="done" placeholder="0">
+      <div class="chips" role="group" aria-label="Quick amounts">
+        ${[200,300,500,1000].map(v=>`<button type="button" class="chip" data-amt="${v}" aria-pressed="false">Rs ${v}</button>`).join("")}
+      </div>
+      <label for="rDate">Date and time</label>
+      <input id="rDate" type="datetime-local" value="${nowLocal()}">
+      <div id="rPreview"></div>
+      <button class="btn gas" id="saveRefill" disabled>Save gasoline refill</button>
+      ${last?`<p class="hint" style="margin-top:14px">Last refill: ${rs(last.amount)} on ${fmtDT(last.date)}</p>`:""}
+      <p class="hint">Gasoline price used: ${rs(c.gasPrice)}/L. Change it in Update fuel prices.</p>
     </section>`;
   },
   summary(){
-    const t = totals(), n = state.entries.length;
-    if(!n) return `<section><h2>Savings summary</h2><p class="empty">No entries yet. Add your first fuel entry to see savings.</p>
-      <button class="btn" data-view="entry">Add fuel entry</button></section>`;
-    const pct = t.gas ? t.save/t.gas*100 : 0;
-    return `<section><h2>Savings summary</h2><div class="report" style="border:0;padding:0;margin:0"><table>
-      <tr class="key"><td>Cumulative savings</td><td class="save">${rs(t.save)}</td></tr>
-      <tr><td>Overall savings percentage</td><td class="save">${num(pct,1)}%</td></tr>
-      <tr><td>Total distance on LPG</td><td>${num(t.km,1)} km</td></tr>
-      <tr><td>Total cylinders</td><td>${num(t.cyl)} (${num(t.cyl*state.config.cylKg,1)} kg)</td></tr>
-      <tr><td>Total LPG expense</td><td class="lpg">${rs(t.lpg)}</td></tr>
-      <tr><td>Equivalent gasoline expense</td><td class="petrol">${rs(t.gas)}</td></tr>
-      <tr><td>Gasoline it replaced</td><td>${num(t.litres)} L</td></tr>
-      <tr><td>Average cost per km on LPG</td><td class="lpg">${rs(t.km?t.lpg/t.km:0)}</td></tr>
-      <tr><td>Average cost per km on gasoline</td><td class="petrol">${rs(t.km?t.gas/t.km:0)}</td></tr>
+    const t = totals();
+    if(!t.nEntry && !t.nRefill) return `<section>${seg("summary")}<h2>Savings summary</h2><p class="empty">No records yet. Add an LPG entry to see your savings.</p>
+      <button class="btn" data-view="entry">Add LPG entry</button></section>`;
+    return `<section>${seg("summary")}<h2>Savings summary</h2><div class="report flat"><table>
+      <tr class="key"><td>${t.net>=0?"Net profit":"Net loss"}</td><td class="${cls(t.net)}">${rs(t.net)}</td></tr>
+      <tr><td>Net savings percentage</td><td class="${cls(t.net)}">${num(t.pct,1)}%</td></tr>
+      <tr><td>Cost if running on gasoline only</td><td class="petrol">${rs(t.gas)}</td></tr>
+      <tr><td>What you actually paid</td><td>${rs(t.actual)}</td></tr>
+      <tr class="sub"><td>LPG (${num(t.cyl)} cylinders, ${num(t.cyl*state.config.cylKg,1)} kg)</td><td class="lpg">${rs(t.lpg)}</td></tr>
+      <tr class="sub"><td>Gasoline refills (${t.nRefill}, ${num(t.refillL,1)} L)</td><td class="petrol">${rs(t.refill)}</td></tr>
+      <tr><td>LPG savings before refills</td><td class="${cls(t.gross)}">${rs(t.gross)}</td></tr>
+      <tr><td>Total distance</td><td>${num(t.km,1)} km</td></tr>
+      <tr><td>Actual cost per km</td><td>${rs(t.km?t.actual/t.km:0)}</td></tr>
+      <tr><td>Cost per km on gasoline only</td><td class="petrol">${rs(t.km?t.gas/t.km:0)}</td></tr>
       <tr><td>Average distance per cylinder</td><td>${num(t.cyl?t.km/t.cyl:0,1)} km</td></tr>
-      <tr><td>Entries</td><td>${n}</td></tr>
-    </table></div></section>`;
+    </table></div>
+    <p class="hint" style="margin-top:12px">Net profit = cost on gasoline only − (LPG + gasoline refills).</p></section>`;
+  },
+  monthly(){
+    const ms = monthly();
+    if(!ms.length) return `<section>${seg("monthly")}<h2>Monthly summary</h2><p class="empty">No records yet.</p></section>`;
+    const recent = ms.slice(-12);
+    const cards = [...ms].reverse().map(m=>`<div class="month">
+      <div class="head"><span class="name">${monthName(m.key)}</span><span class="net ${cls(m.net)}">${rs(m.net)}</span></div>
+      <table>
+        <tr><td>Distance</td><td>${num(m.km,1)} km</td></tr>
+        <tr><td>LPG (${num(m.cyl)} cyl.)</td><td class="lpg">${rs(m.lpg)}</td></tr>
+        <tr><td>Gasoline refills (${m.nRefill})</td><td class="petrol">${rs(m.refill)}</td></tr>
+        <tr><td>Cost on gasoline only</td><td>${rs(m.gas)}</td></tr>
+        <tr><td>Net savings</td><td class="${cls(m.net)}">${num(m.pct,1)}%</td></tr>
+      </table></div>`).join("");
+    return `<section>${seg("monthly")}<h2>Monthly summary</h2>
+      <h3>Net profit or loss per month</h3>${chartNet(recent)}
+      <h3>Spending per month</h3>${chartSpend(recent)}
+      ${ms.length>12?`<p class="hint">Charts show the last 12 months.</p>`:""}
+    </section>
+    <section><h2>Month by month</h2><div class="months">${cards}</div></section>`;
   },
   history(){
-    if(!state.entries.length) return `<section><h2>Fuel history</h2><p class="empty">No entries yet.</p>
-      <button class="btn" data-view="entry">Add fuel entry</button></section>`;
-    let run = 0;
-    const list = state.entries.map(e=>{ const c=calc(e); run+=c.savings; return {e,c,run}; }).reverse();
-    const date = e => new Date(e.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
-    const rows = list.map(({e,c,run})=>`<tr><td>${date(e)}</td><td>${num(e.cyl)}</td><td>${num(e.km,1)}</td>
-        <td class="lpg">${rs(c.lpgCost)}</td><td class="petrol">${rs(c.gasCost)}</td>
-        <td class="${c.savings>=0?'save':'neg'}">${rs(c.savings)}</td><td>${rs(run)}</td>
-        <td><button class="del" data-id="${e.id}">Delete</button></td></tr>`).join("");
-    const cards = list.map(({e,c,run})=>`<li>
-        <div class="top"><span class="saved ${c.savings>=0?'save':'neg'}">${rs(c.savings)}</span><span class="meta">${date(e)}</span></div>
-        <div class="meta">${num(e.cyl)} cylinder${e.cyl===1?'':'s'}, ${num(e.km,1)} km${e.vehicle?`, ${esc(e.vehicle)}`:''}</div>
-        <dl><div><dt>LPG</dt><dd class="lpg">${rs(c.lpgCost)}</dd></div>
-            <div><dt>Gasoline</dt><dd class="petrol">${rs(c.gasCost)}</dd></div>
-            <div><dt>Cost per km</dt><dd>${rs(c.lpgPerKm)}</dd></div>
-            <div><dt>Running total</dt><dd>${rs(run)}</dd></div></dl>
-        <button class="del" data-id="${e.id}">Delete entry</button></li>`).join("");
-    return `<section><h2>Fuel history</h2>
-      <div class="tablewrap"><table class="hist">
-      <tr><th>Date</th><th>Cyl.</th><th>km</th><th>LPG</th><th>Gasoline</th><th>Saved</th><th>Running total</th><th></th></tr>
-      ${rows}</table></div>
-      <ul class="cards">${cards}</ul>
-      <p class="hint">Each entry keeps the prices and consumption in force when it was saved, so later updates never change past results.</p></section>`;
+    const items = [
+      ...state.entries.map(e=>({kind:"lpg", date:e.date, id:e.id, e, c:calc(e)})),
+      ...state.refills.map(r=>({kind:"refill", date:r.date, id:r.id, r}))
+    ].sort((a,b)=>a.date.localeCompare(b.date));
+    if(!items.length) return `<section><h2>Fuel history</h2><p class="empty">No records yet.</p>
+      <button class="btn" data-view="entry">Add LPG entry</button></section>`;
+    let run=0; items.forEach(it=>{ run += it.kind==="lpg" ? it.c.savings : -it.r.amount; it.run=run; });
+    const shown = items.filter(it=>histFilter==="all"||it.kind===histFilter).reverse();
+    const filt = `<div class="chips" role="group" aria-label="Filter" style="margin:0 0 12px">
+      ${[["all","All"],["lpg","LPG"],["refill","Gasoline refills"]].map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${histFilter===k}">${l}</button>`).join("")}</div>`;
+    const rows = shown.map(it=> it.kind==="lpg"
+      ? `<tr><td>${fmtDT(it.date)}</td><td class="type"><span class="tag lpg">LPG</span></td><td>${num(it.e.cyl)} cyl.</td><td>${num(it.e.km,1)} km</td>
+          <td class="lpg">${rs(it.c.lpgCost)}</td><td class="${cls(it.c.savings)}">+${rs(it.c.savings)}</td><td>${rs(it.run)}</td>
+          <td><button class="del" data-kind="lpg" data-id="${it.id}">Delete</button></td></tr>`
+      : `<tr><td>${fmtDT(it.date)}</td><td class="type"><span class="tag petrol">Gasoline</span></td><td>${num(it.r.amount/it.r.gasPrice)} L</td><td></td>
+          <td class="petrol">${rs(it.r.amount)}</td><td class="neg">${rs(-it.r.amount)}</td><td>${rs(it.run)}</td>
+          <td><button class="del" data-kind="refill" data-id="${it.id}">Delete</button></td></tr>`).join("");
+    const cards = shown.map(it=> it.kind==="lpg"
+      ? `<li><div class="top"><span class="saved ${cls(it.c.savings)}">+${rs(it.c.savings)}</span><span class="tag lpg">LPG</span></div>
+          <div class="meta">${fmtDT(it.date)}</div>
+          <div class="meta">${num(it.e.cyl)} cylinder${it.e.cyl===1?'':'s'}, ${num(it.e.km,1)} km${it.e.vehicle?`, ${esc(it.e.vehicle)}`:''}</div>
+          <dl><div><dt>LPG cost</dt><dd class="lpg">${rs(it.c.lpgCost)}</dd></div>
+              <div><dt>Gasoline equivalent</dt><dd class="petrol">${rs(it.c.gasCost)}</dd></div>
+              <div><dt>Cost per km</dt><dd>${rs(it.c.lpgPerKm)}</dd></div>
+              <div><dt>Running net total</dt><dd class="${cls(it.run)}">${rs(it.run)}</dd></div></dl>
+          <button class="del" data-kind="lpg" data-id="${it.id}">Delete entry</button></li>`
+      : `<li class="refill"><div class="top"><span class="saved neg">${rs(-it.r.amount)}</span><span class="tag petrol">Gasoline refill</span></div>
+          <div class="meta">${fmtDT(it.date)}</div>
+          <dl><div><dt>Litres (approx.)</dt><dd>${num(it.r.amount/it.r.gasPrice)} L</dd></div>
+              <div><dt>Running net total</dt><dd class="${cls(it.run)}">${rs(it.run)}</dd></div></dl>
+          <button class="del" data-kind="refill" data-id="${it.id}">Delete refill</button></li>`).join("");
+    return `<section><h2>Fuel history</h2>${filt}
+      ${shown.length?`<div class="tablewrap"><table class="hist">
+      <tr><th>Date and time</th><th class="type">Type</th><th>Fuel</th><th>Distance</th><th>Paid</th><th>Effect</th><th>Running net</th><th></th></tr>
+      ${rows}</table></div><ul class="cards">${cards}</ul>`:`<p class="empty">Nothing recorded in this category yet.</p>`}
+      <p class="hint">Each record keeps the prices in force when it was saved, so later updates never change past results.</p></section>`;
   },
   more(){
     const c = state.config;
     const item = (v,t,s) => `<li><button data-view="${v}"><span>${t}<span class="sub">${s}</span></span><span class="chev">›</span></button></li>`;
     return `<section><h2>More</h2><ul class="list">
+      ${item("monthly","Monthly summary","Profit or loss per month, with charts")}
       ${item("prices","Update fuel prices",`LPG ${rs(c.lpgPrice)} per cylinder, gasoline ${rs(c.gasPrice)}/L`)}
       ${item("vehicle","Update vehicle",`${esc(vehicleLabel())}, ${num(c.kmPerL,1)} km/L`)}
       ${item("storage","Storage & sync", gh ? `Syncing to ${esc(gh.owner)}/${esc(gh.repo)}` : "Saved on this device only")}
-      ${item("reset","Reset tracking",`${state.entries.length} entries recorded`)}
+      ${item("reset","Reset tracking",`${state.entries.length} LPG entries, ${state.refills.length} gasoline refills`)}
     </ul></section>`;
   },
   prices(){
@@ -334,7 +484,7 @@ const views = {
       <label for="cylKg">Cylinder capacity (kg)</label><input id="cylKg" type="number" inputmode="decimal" step="0.1" value="${c.cylKg}">
       <label for="gasPrice">Gasoline price (Rs per litre)</label><input id="gasPrice" type="number" inputmode="decimal" step="0.01" value="${c.gasPrice}">
       <button class="btn" id="savePrices">Save prices</button>
-      <p class="hint">New prices apply to future entries only.</p></section>`;
+      <p class="hint">New prices apply to future records only.</p></section>`;
   },
   vehicle(){
     const c = state.config;
@@ -347,7 +497,7 @@ const views = {
       <label for="kmPerL">Average gasoline consumption (km/L)</label>
       <input id="kmPerL" type="number" inputmode="decimal" step="0.1" value="${c.kmPerL}">
       <button class="btn" id="saveVehicle">Save vehicle</button>
-      <p class="hint">Consumption applies to future entries only. Past entries keep the figure used when they were saved.</p></section>`;
+      <p class="hint">Consumption applies to future entries only.</p></section>`;
   },
   storage(){
     const g = gh || {owner:"",repo:"",path:"data.json",branch:"main",token:""};
@@ -363,7 +513,7 @@ const views = {
       <input id="ghToken" type="password" autocomplete="off" value="${esc(g.token)}" placeholder="github_pat_…">
       <button class="btn" id="ghSave">${gh?"Save and sync":"Connect and sync"}</button>
       ${gh?`<button class="btn ghost" id="ghPull">Load from GitHub</button> <button class="btn ghost" id="ghOff">Disconnect</button>`:""}
-      <h2 style="margin-top:24px">Backup file</h2>
+      <h3 style="margin-top:24px">Backup file</h3>
       <button class="btn ghost" id="exportBtn">Download backup</button>
       <label class="btn ghost" style="display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-top:16px">Restore backup
         <input type="file" id="importFile" accept="application/json,.json" hidden></label>
@@ -371,7 +521,7 @@ const views = {
   },
   reset(){
     return `<section>${back()}<h2>Reset tracking</h2>
-      <p>This deletes all ${state.entries.length} entries and restores the default prices and vehicle. Download a backup first if you might need them.</p>
+      <p>This deletes all ${state.entries.length} LPG entries and ${state.refills.length} gasoline refills, and restores the default prices and vehicle. Download a backup first if you might need them.</p>
       <label for="confirmTxt">Type RESET to confirm</label><input id="confirmTxt" autocomplete="off" autocapitalize="characters">
       <button class="btn danger" id="doReset">Delete all records</button></section>`;
   }
@@ -379,7 +529,7 @@ const views = {
 
 function show(name, msg){
   current = name;
-  const tab = MORE_VIEWS.includes(name) ? "more" : name;
+  const tab = MORE_VIEWS.includes(name) ? "more" : (SUMMARY_VIEWS.includes(name) ? "summary" : name);
   document.querySelectorAll("nav.menu button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===name));
   document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===tab));
   $("#view").innerHTML = views[name]();
@@ -388,13 +538,15 @@ function show(name, msg){
   if(msg) toast(msg);
   window.scrollTo({top:0});
 }
-// delegated navigation for every [data-view] button
 document.addEventListener("click", e=>{
   const b = e.target.closest("[data-view]"); if(b) show(b.dataset.view);
+  const f = e.target.closest("[data-filter]"); if(f){ histFilter = f.dataset.filter; show("history"); }
 });
-$("#vehicle")?.addEventListener("click", ()=>show("vehicle"));
+$("#vehicle").addEventListener("click", ()=>show("vehicle"));
 
 const pick = () => ({lpgPrice:state.config.lpgPrice, gasPrice:state.config.gasPrice, kmPerL:state.config.kmPerL, vehicle:vehicleLabel()});
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const desktop = () => window.matchMedia("(min-width:641px)").matches;
 
 const bind = {
   entry(){
@@ -403,27 +555,55 @@ const bind = {
     const upd = () => {
       const v = read(), okC = v.cyl>0, okK = v.km>0;
       btn.disabled = !(okC && okK);
-      document.querySelectorAll(".chip").forEach(ch=>ch.setAttribute("aria-pressed", parseFloat(ch.dataset.cyl)===v.cyl));
+      document.querySelectorAll("[data-cyl]").forEach(ch=>ch.setAttribute("aria-pressed", parseFloat(ch.dataset.cyl)===v.cyl));
       if(okC && okK) pv.innerHTML = `<div class="report">${reportTable({...v, ...pick()})}</div>`;
       else if(okC || okK) pv.innerHTML = `<p class="hint" style="margin-top:12px">Now enter the ${okC?'kilometres travelled':'number of cylinders used'}.</p>`;
       else pv.innerHTML = "";
     };
     cyl.oninput = km.oninput = upd;
-    document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{ cyl.value = ch.dataset.cyl; upd(); km.focus(); });
+    document.querySelectorAll("[data-cyl]").forEach(ch=>ch.onclick=()=>{ cyl.value = ch.dataset.cyl; upd(); km.focus(); });
     cyl.onkeydown = e => { if(e.key==="Enter"){ e.preventDefault(); km.focus(); } };
     km.onkeydown = e => { if(e.key==="Enter"){ e.preventDefault(); km.blur(); if(!btn.disabled) btn.click(); } };
-    if(window.matchMedia("(min-width:641px)").matches) cyl.focus();
+    if(desktop()) cyl.focus();
     btn.onclick = () => {
       const v = read(); if(!(v.cyl>0 && v.km>0)) return;
-      state.entries.push({id:Date.now().toString(36), date:new Date().toISOString(), ...v, ...pick()});
-      persist(); const c = calc(state.entries.at(-1));
-      show("summary", `Entry saved. You saved ${rs(c.savings)} on this one.`);
+      const e = {id:newId(), date:readDT("#eDate"), ...v, ...pick()};
+      state.entries.push(e); persist();
+      show("summary", `LPG entry saved. ${rs(calc(e).savings)} saved on this one.`);
+    };
+  },
+  refill(){
+    const amt = $("#amt"), btn = $("#saveRefill"), pv = $("#rPreview");
+    const upd = () => {
+      const a = parseFloat(amt.value), ok = a>0;
+      btn.disabled = !ok;
+      document.querySelectorAll("[data-amt]").forEach(ch=>ch.setAttribute("aria-pressed", parseFloat(ch.dataset.amt)===a));
+      if(!ok){ pv.innerHTML=""; return; }
+      const t = totals(), after = t.net - a;
+      pv.innerHTML = `<div class="report"><table>
+        <tr><td>Gasoline bought (approx.)</td><td>${num(a/state.config.gasPrice)} L</td></tr>
+        <tr><td>Enough for about</td><td>${num(a/state.config.gasPrice*state.config.kmPerL,0)} km</td></tr>
+        <tr><td>Net total now</td><td class="${cls(t.net)}">${rs(t.net)}</td></tr>
+        <tr class="key"><td>Net total after this refill</td><td class="${cls(after)}">${rs(after)}</td></tr>
+      </table></div>`;
+    };
+    amt.oninput = upd;
+    document.querySelectorAll("[data-amt]").forEach(ch=>ch.onclick=()=>{ amt.value = ch.dataset.amt; upd(); });
+    amt.onkeydown = e => { if(e.key==="Enter"){ e.preventDefault(); amt.blur(); if(!btn.disabled) btn.click(); } };
+    if(desktop()) amt.focus();
+    btn.onclick = () => {
+      const a = parseFloat(amt.value); if(!(a>0)) return;
+      state.refills.push({id:newId(), date:readDT("#rDate"), amount:a, gasPrice:state.config.gasPrice});
+      persist(); show("summary", `Gasoline refill of ${rs(a)} saved.`);
     };
   },
   history(){
     document.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
-      if(!confirm("Delete this entry?")) return;
-      state.entries = state.entries.filter(e=>e.id!==b.dataset.id); persist(); show("history","Entry deleted.");
+      const isLpg = b.dataset.kind==="lpg";
+      if(!confirm(isLpg?"Delete this LPG entry?":"Delete this gasoline refill?")) return;
+      if(isLpg) state.entries = state.entries.filter(e=>e.id!==b.dataset.id);
+      else state.refills = state.refills.filter(r=>r.id!==b.dataset.id);
+      persist(); show("history", isLpg?"LPG entry deleted.":"Gasoline refill deleted.");
     });
   },
   prices(){
@@ -456,8 +636,9 @@ const bind = {
       const f=ev.target.files[0]; if(!f) return;
       try{ const d=JSON.parse(await f.text());
         if(!d.config||!Array.isArray(d.entries)) throw 0;
-        if(!confirm("Replace current records with "+d.entries.length+" entries from the backup?")) return;
-        state=normalise(d); persist(); show("summary","Backup restored.");
+        const n = normalise(d);
+        if(!confirm(`Replace current records with ${n.entries.length} LPG entries and ${n.refills.length} refills from the backup?`)) return;
+        state=n; persist(); show("summary","Backup restored.");
       }catch(e){ toast("That file is not a valid tracker backup."); }
       ev.target.value="";
     };
@@ -465,7 +646,7 @@ const bind = {
   reset(){
     $("#doReset").onclick = () => {
       if($("#confirmTxt").value.trim().toUpperCase()!=="RESET") return toast("Type RESET in the box to confirm.");
-      state = {config:{...DEFAULTS}, entries:[]}; persist(); show("entry","All records deleted. Defaults restored.");
+      state = {config:{...DEFAULTS}, entries:[], refills:[]}; persist(); show("entry","All records deleted. Defaults restored.");
     };
   }
 };
@@ -481,7 +662,6 @@ const b64enc = s => btoa(unescape(encodeURIComponent(s)));
 const b64dec = s => decodeURIComponent(escape(atob(s.replace(/\n/g,""))));
 function ghUrl(){ return `https://api.github.com/repos/${gh.owner}/${gh.repo}/contents/${encodeURIComponent(gh.path).replace(/%2F/g,"/")}`; }
 function ghHeaders(){ return {"Authorization":"Bearer "+gh.token, "Accept":"application/vnd.github+json"}; }
-
 async function ghGet(){
   const r = await fetch(ghUrl()+"?ref="+encodeURIComponent(gh.branch)+"&t="+Date.now(), {headers:ghHeaders(), cache:"no-store"});
   if(r.status===404) return null;
@@ -518,8 +698,9 @@ async function connectGh(){
   if(!g.owner||!g.repo||!g.token) return toast("Enter your username, repository and token.");
   gh = g; try{ localStorage.setItem(LS_GH, JSON.stringify(gh)); }catch(e){}
   try{ const r = await ghGet();
-    if(r && r.data && r.data.entries && r.data.entries.length && state.entries.length &&
-       !confirm("GitHub already has "+r.data.entries.length+" entries. OK = load them (replaces this device's records). Cancel = upload this device's records instead.")){
+    const remoteN = r && r.data ? (r.data.entries||[]).length + (r.data.refills||[]).length : 0;
+    const localN = state.entries.length + state.refills.length;
+    if(remoteN && localN && !confirm(`GitHub already has ${remoteN} records. OK = load them (replaces this device's records). Cancel = upload this device's records instead.`)){
       await ghPut(); setSync("Synced with GitHub."); return show("storage","This device's records uploaded to GitHub.");
     }
     if(r && r.data && Array.isArray(r.data.entries)){ state=normalise(r.data); saveLocal(); setSync("Synced with GitHub."); show("summary","Connected. Records loaded from GitHub."); }
@@ -527,11 +708,11 @@ async function connectGh(){
   }catch(e){ toast("Could not connect: "+e.message); }
 }
 
-/* ---------- keyboard shortcuts 1–6 on desktop ---------- */
-const order=["entry","summary","history","prices","vehicle","reset"];
+/* ---------- keyboard shortcuts 1–8 on desktop ---------- */
+const order=["entry","refill","summary","monthly","history","prices","vehicle","reset"];
 document.addEventListener("keydown",e=>{
   if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) return;
-  const i=parseInt(e.key,10); if(i>=1&&i<=6) show(order[i-1]);
+  const i=parseInt(e.key,10); if(i>=1&&i<=8) show(order[i-1]);
 });
 
 show("entry");
