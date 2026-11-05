@@ -172,6 +172,16 @@ input:focus,button:focus-visible,select:focus{outline:3px solid var(--lpg);outli
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
 code{font-size:.9em}
+.pumpopen{display:block;margin-top:12px;padding:8px 12px;border-radius:8px;border:1px solid #2F5A3A;background:rgba(124,255,160,.08);
+  color:#BFE8CB;font:500 .9rem "Barlow",sans-serif;text-align:left;cursor:pointer;width:100%}
+.pumpopen b{color:var(--display-ink)}
+.opencyl{border:1.5px solid var(--lpg);border-radius:12px;padding:14px 16px;margin:4px 0 6px;background:var(--bg)}
+.opencyl .t{font:700 1.25rem "Barlow Condensed",sans-serif}
+.opencyl .d{color:var(--muted);font-size:.92rem}
+.steps{display:flex;gap:8px;margin:2px 0 10px;font-size:.85rem;color:var(--muted)}
+.steps span{padding:3px 10px;border-radius:12px;border:1px solid var(--line)}
+.steps span.on{border-color:var(--lpg);color:var(--lpg);font-weight:600}
+.cards li.inuse{border-left-style:dashed}
 </style>
 </head>
 <body>
@@ -189,10 +199,11 @@ code{font-size:.9em}
       <span>LPG spent<b id="pumpLpg">Rs 0</b></span>
       <span>Gasoline refills<b id="pumpGas">Rs 0</b></span>
     </div>
+    <button class="pumpopen" id="pumpOpen" data-view="entry" hidden></button>
   </div>
 
   <nav class="menu" aria-label="Main menu">
-    <button data-view="entry"><span class="n">1</span>New LPG entry</button>
+    <button data-view="entry"><span class="n">1</span>LPG cylinder</button>
     <button data-view="refill"><span class="n">2</span>Gasoline refill</button>
     <button data-view="summary"><span class="n">3</span>Savings summary</button>
     <button data-view="monthly"><span class="n">4</span>Monthly summary</button>
@@ -209,7 +220,7 @@ code{font-size:.9em}
 </div>
 
 <nav class="tabs" aria-label="Main menu">
-  <button data-view="entry"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>LPG entry</button>
+  <button data-view="entry"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>LPG</button>
   <button data-view="refill"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z"/></svg>Gas refill</button>
   <button data-view="summary"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Summary</button>
   <button data-view="history"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>History</button>
@@ -235,11 +246,11 @@ function normalise(d){
     c.vehicleName = d.config.vehicle; c.vehicleYear = ""; c.vehicleEngine = "";
   }
   delete c.vehicle;
-  return {config:c, entries:Array.isArray(d.entries)?d.entries:[], refills:Array.isArray(d.refills)?d.refills:[]};
+  return {config:c, entries:Array.isArray(d.entries)?d.entries:[], refills:Array.isArray(d.refills)?d.refills:[], open:d.open||null};
 }
 function load(){
   try{ const d = JSON.parse(localStorage.getItem(LS_DATA)); if(d && d.config) return normalise(d); }catch(e){}
-  return {config:{...DEFAULTS}, entries:[], refills:[]};
+  return {config:{...DEFAULTS}, entries:[], refills:[], open:null};
 }
 function loadGh(){ try{ return JSON.parse(localStorage.getItem(LS_GH)) || null; }catch(e){ return null; } }
 function saveLocal(){ try{ localStorage.setItem(LS_DATA, JSON.stringify(state)); }catch(e){} }
@@ -254,6 +265,9 @@ const monthKey = iso => { const d=new Date(iso); return d.getFullYear()+"-"+Stri
 const monthName = (k,short) => new Date(+k.slice(0,4), +k.slice(5)-1, 1).toLocaleDateString("en-GB",short?{month:"short"}:{month:"long",year:"numeric"});
 function nowLocal(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
 function readDT(id){ const v=$(id).value; const d=v?new Date(v):new Date(); return isNaN(d)?new Date().toISOString():d.toISOString(); }
+function daysBetween(a,b){ return Math.max(0,(new Date(b)-new Date(a))/86400000); }
+function durText(a,b){ const d=daysBetween(a,b); if(d<1){ const h=Math.round(d*24); return h<1?"less than an hour":h+" hour"+(h===1?"":"s"); }
+  const n=Math.round(d*10)/10; return num(n,1)+" day"+(n===1?"":"s"); }
 function vehicleLabel(c=state.config){
   return [c.vehicleName, c.vehicleYear].filter(Boolean).join(" ") + (c.vehicleEngine ? ` (${c.vehicleEngine})` : "");
 }
@@ -298,6 +312,9 @@ function refreshPump(){
   $("#pumpKm").textContent = num(t.km,1) + " km";
   $("#pumpLpg").textContent = rs0(t.lpg);
   $("#pumpGas").textContent = rs0(t.refill);
+  const o = state.open, po = $("#pumpOpen");
+  po.hidden = !o;
+  if(o) po.innerHTML = `Cylinder in use for <b>${durText(o.startDate,new Date().toISOString())}</b>. Tap to finish it.`;
   $("#vehicle").textContent = `${vehicleLabel()}, ${num(state.config.kmPerL,1)} km/L`;
   document.title = "LPG Savings – " + (state.config.vehicleName || "My car");
 }
@@ -358,7 +375,39 @@ function chartSpend(ms){
 /* ---------- views ---------- */
 const views = {
   entry(){
-    return `<section><h2>New LPG entry</h2>
+    const o = state.open, c = state.config;
+    if(!o) return `<section><h2>LPG cylinder</h2>
+      <div class="steps"><span class="on">1. Refill</span><span>2. Finish</span></div>
+      <p class="hint" style="margin:0">Record the cylinder when you fit it. When it runs out, come back and enter the kilometres you drove.</p>
+      <label for="sCyl">Cylinders refilled</label>
+      <input id="sCyl" class="big" type="number" inputmode="decimal" min="0" step="0.01" value="1">
+      <div class="chips" role="group" aria-label="Quick cylinder amounts">
+        ${[0.5,1,2].map(v=>`<button type="button" class="chip" data-scyl="${v}" aria-pressed="${v===1}">${v}</button>`).join("")}
+      </div>
+      <label for="sDate">Refilled on</label>
+      <input id="sDate" type="datetime-local" value="${nowLocal()}">
+      <p class="hint" id="sCost">Cost: ${rs(c.lpgPrice)} at ${rs(c.lpgPrice)} per cylinder</p>
+      <button class="btn" id="startCyl">Save LPG refill</button>
+      <p class="hint" style="margin-top:14px">Recording a cylinder you already finished? <button class="linkbtn" data-view="manual">Add a completed entry</button></p>
+    </section>`;
+    return `<section><h2>LPG cylinder</h2>
+      <div class="steps"><span>1. Refill</span><span class="on">2. Finish</span></div>
+      <div class="opencyl">
+        <div class="t">${num(o.cyl)} cylinder${o.cyl===1?'':'s'} in use</div>
+        <div class="d">Refilled ${fmtDT(o.startDate)}, ${durText(o.startDate,new Date().toISOString())} ago</div>
+        <div class="d">Paid ${rs(o.cyl*o.lpgPrice)}</div>
+      </div>
+      <label for="fKm">Kilometres travelled on this cylinder</label>
+      <input id="fKm" class="big" type="number" inputmode="decimal" min="0" step="0.1" enterkeyhint="done" placeholder="0">
+      <label for="fDate">Finished on</label>
+      <input id="fDate" type="datetime-local" value="${nowLocal()}">
+      <div id="fPreview"></div>
+      <button class="btn" id="finishCyl" disabled>Finish cylinder and save</button>
+      <button class="btn ghost" id="cancelCyl">Remove this refill</button>
+    </section>`;
+  },
+  manual(){
+    return `<section><button class="back" data-view="entry" style="display:inline-block">‹ LPG cylinder</button><h2>Add a completed entry</h2>
       <label for="cyl">LPG cylinders used</label>
       <input id="cyl" class="big" type="number" inputmode="decimal" min="0" step="0.01" enterkeyhint="next" placeholder="0">
       <div class="chips" role="group" aria-label="Quick cylinder amounts">
@@ -370,6 +419,7 @@ const views = {
       <input id="eDate" type="datetime-local" value="${nowLocal()}">
       <div id="preview"></div>
       <button class="btn" id="saveEntry" disabled>Save LPG entry</button>
+      <p class="hint" style="margin-top:12px">Use this for cylinders you have already finished. For a new cylinder, record it when you refill.</p>
     </section>`;
   },
   refill(){
@@ -391,8 +441,8 @@ const views = {
   },
   summary(){
     const t = totals();
-    if(!t.nEntry && !t.nRefill) return `<section>${seg("summary")}<h2>Savings summary</h2><p class="empty">No records yet. Add an LPG entry to see your savings.</p>
-      <button class="btn" data-view="entry">Add LPG entry</button></section>`;
+    if(!t.nEntry && !t.nRefill) return `<section>${seg("summary")}<h2>Savings summary</h2><p class="empty">No records yet. Record an LPG refill to start.</p>
+      <button class="btn" data-view="entry">Record an LPG refill</button></section>`;
     return `<section>${seg("summary")}<h2>Savings summary</h2><div class="report flat"><table>
       <tr class="key"><td>${t.net>=0?"Net profit":"Net loss"}</td><td class="${cls(t.net)}">${rs(t.net)}</td></tr>
       <tr><td>Net savings percentage</td><td class="${cls(t.net)}">${num(t.pct,1)}%</td></tr>
@@ -433,14 +483,14 @@ const views = {
       ...state.entries.map(e=>({kind:"lpg", date:e.date, id:e.id, e, c:calc(e)})),
       ...state.refills.map(r=>({kind:"refill", date:r.date, id:r.id, r}))
     ].sort((a,b)=>a.date.localeCompare(b.date));
-    if(!items.length) return `<section><h2>Fuel history</h2><p class="empty">No records yet.</p>
-      <button class="btn" data-view="entry">Add LPG entry</button></section>`;
+    if(!items.length && !state.open) return `<section><h2>Fuel history</h2><p class="empty">No records yet.</p>
+      <button class="btn" data-view="entry">Record an LPG refill</button></section>`;
     let run=0; items.forEach(it=>{ run += it.kind==="lpg" ? it.c.savings : -it.r.amount; it.run=run; });
     const shown = items.filter(it=>histFilter==="all"||it.kind===histFilter).reverse();
     const filt = `<div class="chips" role="group" aria-label="Filter" style="margin:0 0 12px">
       ${[["all","All"],["lpg","LPG"],["refill","Gasoline refills"]].map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${histFilter===k}">${l}</button>`).join("")}</div>`;
     const rows = shown.map(it=> it.kind==="lpg"
-      ? `<tr><td>${fmtDT(it.date)}</td><td class="type"><span class="tag lpg">LPG</span></td><td>${num(it.e.cyl)} cyl.</td><td>${num(it.e.km,1)} km</td>
+      ? `<tr><td>${fmtDT(it.date)}${it.e.startDate?`<br><span class="hint">from ${fmtDT(it.e.startDate)}</span>`:""}</td><td class="type"><span class="tag lpg">LPG</span></td><td>${num(it.e.cyl)} cyl.</td><td>${num(it.e.km,1)} km</td>
           <td class="lpg">${rs(it.c.lpgCost)}</td><td class="${cls(it.c.savings)}">+${rs(it.c.savings)}</td><td>${rs(it.run)}</td>
           <td><button class="del" data-kind="lpg" data-id="${it.id}">Delete</button></td></tr>`
       : `<tr><td>${fmtDT(it.date)}</td><td class="type"><span class="tag petrol">Gasoline</span></td><td>${num(it.r.amount/it.r.gasPrice)} L</td><td></td>
@@ -448,7 +498,7 @@ const views = {
           <td><button class="del" data-kind="refill" data-id="${it.id}">Delete</button></td></tr>`).join("");
     const cards = shown.map(it=> it.kind==="lpg"
       ? `<li><div class="top"><span class="saved ${cls(it.c.savings)}">+${rs(it.c.savings)}</span><span class="tag lpg">LPG</span></div>
-          <div class="meta">${fmtDT(it.date)}</div>
+          <div class="meta">${it.e.startDate?`${fmtDT(it.e.startDate)} to ${fmtDT(it.date)} (${durText(it.e.startDate,it.date)})`:fmtDT(it.date)}</div>
           <div class="meta">${num(it.e.cyl)} cylinder${it.e.cyl===1?'':'s'}, ${num(it.e.km,1)} km${it.e.vehicle?`, ${esc(it.e.vehicle)}`:''}</div>
           <dl><div><dt>LPG cost</dt><dd class="lpg">${rs(it.c.lpgCost)}</dd></div>
               <div><dt>Gasoline equivalent</dt><dd class="petrol">${rs(it.c.gasCost)}</dd></div>
@@ -460,10 +510,14 @@ const views = {
           <dl><div><dt>Litres (approx.)</dt><dd>${num(it.r.amount/it.r.gasPrice)} L</dd></div>
               <div><dt>Running net total</dt><dd class="${cls(it.run)}">${rs(it.run)}</dd></div></dl>
           <button class="del" data-kind="refill" data-id="${it.id}">Delete refill</button></li>`).join("");
-    return `<section><h2>Fuel history</h2>${filt}
+    const o = state.open, openHtml = (o && histFilter!=="refill") ? `<ul class="cards" style="display:block"><li class="inuse">
+        <div class="top"><span class="saved lpg">In use</span><span class="tag lpg">LPG</span></div>
+        <div class="meta">${num(o.cyl)} cylinder${o.cyl===1?'':'s'} refilled ${fmtDT(o.startDate)}, ${durText(o.startDate,new Date().toISOString())} ago. Paid ${rs(o.cyl*o.lpgPrice)}.</div>
+        <button class="btn" data-view="entry" style="margin-top:10px">Finish this cylinder</button></li></ul>` : "";
+    return `<section><h2>Fuel history</h2>${filt}${openHtml}
       ${shown.length?`<div class="tablewrap"><table class="hist">
       <tr><th>Date and time</th><th class="type">Type</th><th>Fuel</th><th>Distance</th><th>Paid</th><th>Effect</th><th>Running net</th><th></th></tr>
-      ${rows}</table></div><ul class="cards">${cards}</ul>`:`<p class="empty">Nothing recorded in this category yet.</p>`}
+      ${rows}</table></div><ul class="cards">${cards}</ul>`:(o&&histFilter!=="refill"?"":`<p class="empty">Nothing recorded in this category yet.</p>`)}
       <p class="hint">Each record keeps the prices in force when it was saved, so later updates never change past results.</p></section>`;
   },
   more(){
@@ -521,7 +575,7 @@ const views = {
   },
   reset(){
     return `<section>${back()}<h2>Reset tracking</h2>
-      <p>This deletes all ${state.entries.length} LPG entries and ${state.refills.length} gasoline refills, and restores the default prices and vehicle. Download a backup first if you might need them.</p>
+      <p>This deletes all ${state.entries.length} LPG entries and ${state.refills.length} gasoline refills${state.open?', plus the cylinder in use':''}, and restores the default prices and vehicle. Download a backup first if you might need them.</p>
       <label for="confirmTxt">Type RESET to confirm</label><input id="confirmTxt" autocomplete="off" autocapitalize="characters">
       <button class="btn danger" id="doReset">Delete all records</button></section>`;
   }
@@ -529,8 +583,9 @@ const views = {
 
 function show(name, msg){
   current = name;
-  const tab = MORE_VIEWS.includes(name) ? "more" : (SUMMARY_VIEWS.includes(name) ? "summary" : name);
-  document.querySelectorAll("nav.menu button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===name));
+  const tab = MORE_VIEWS.includes(name) ? "more" : (SUMMARY_VIEWS.includes(name) ? "summary" : (name==="manual" ? "entry" : name));
+  const navName = name==="manual" ? "entry" : name;
+  document.querySelectorAll("nav.menu button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===navName));
   document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current", b.dataset.view===tab));
   $("#view").innerHTML = views[name]();
   bind[name] && bind[name]();
@@ -550,6 +605,48 @@ const desktop = () => window.matchMedia("(min-width:641px)").matches;
 
 const bind = {
   entry(){
+    const o = state.open;
+    if(!o){
+      const sc = $("#sCyl"), cost = $("#sCost");
+      const upd = () => { const v=parseFloat(sc.value);
+        document.querySelectorAll("[data-scyl]").forEach(ch=>ch.setAttribute("aria-pressed", parseFloat(ch.dataset.scyl)===v));
+        cost.textContent = v>0 ? `Cost: ${rs(v*state.config.lpgPrice)} at ${rs(state.config.lpgPrice)} per cylinder` : "Enter the number of cylinders."; };
+      sc.oninput = upd;
+      document.querySelectorAll("[data-scyl]").forEach(ch=>ch.onclick=()=>{ sc.value=ch.dataset.scyl; upd(); });
+      $("#startCyl").onclick = () => {
+        const v=parseFloat(sc.value); if(!(v>0)) return toast("Enter the number of cylinders.");
+        state.open = {id:newId(), startDate:readDT("#sDate"), cyl:v, lpgPrice:state.config.lpgPrice};
+        persist(); show("entry", `LPG refill saved. Come back when it runs out.`);
+      };
+      return;
+    }
+    const km = $("#fKm"), btn = $("#finishCyl"), pv = $("#fPreview");
+    const build = () => { const end=readDT("#fDate");
+      return {id:o.id, startDate:o.startDate, date:end, cyl:o.cyl, km:parseFloat(km.value),
+              lpgPrice:o.lpgPrice, gasPrice:state.config.gasPrice, kmPerL:state.config.kmPerL, vehicle:vehicleLabel()}; };
+    const upd = () => {
+      const e = build(), ok = e.km>0;
+      btn.disabled = !ok;
+      if(!ok){ pv.innerHTML=""; return; }
+      const days = daysBetween(e.startDate,e.date);
+      pv.innerHTML = `<div class="report">${reportTable(e)}<table>
+        <tr><td>Time on this cylinder</td><td>${durText(e.startDate,e.date)}</td></tr>
+        ${days>=1?`<tr><td>Average per day</td><td>${num(e.km/days,1)} km</td></tr>`:""}</table></div>`;
+    };
+    km.oninput = $("#fDate").oninput = upd;
+    km.onkeydown = ev => { if(ev.key==="Enter"){ ev.preventDefault(); km.blur(); if(!btn.disabled) btn.click(); } };
+    btn.onclick = () => {
+      const e = build(); if(!(e.km>0)) return;
+      if(new Date(e.date) < new Date(e.startDate)) return toast("The finish date is before the refill date.");
+      state.entries.push(e); state.open = null; persist();
+      show("summary", `Cylinder finished. ${rs(calc(e).savings)} saved on it.`);
+    };
+    $("#cancelCyl").onclick = () => {
+      if(!confirm("Remove this LPG refill? Use this only if it was entered by mistake.")) return;
+      state.open = null; persist(); show("entry","LPG refill removed.");
+    };
+  },
+  manual(){
     const cyl = $("#cyl"), km = $("#km"), btn = $("#saveEntry"), pv = $("#preview");
     const read = () => ({cyl:parseFloat(cyl.value), km:parseFloat(km.value)});
     const upd = () => {
@@ -646,7 +743,7 @@ const bind = {
   reset(){
     $("#doReset").onclick = () => {
       if($("#confirmTxt").value.trim().toUpperCase()!=="RESET") return toast("Type RESET in the box to confirm.");
-      state = {config:{...DEFAULTS}, entries:[], refills:[]}; persist(); show("entry","All records deleted. Defaults restored.");
+      state = {config:{...DEFAULTS}, entries:[], refills:[], open:null}; persist(); show("entry","All records deleted. Defaults restored.");
     };
   }
 };
