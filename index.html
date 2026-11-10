@@ -468,7 +468,8 @@ const views = {
         <tr><td>Distance</td><td>${num(m.km,1)} km</td></tr>
         <tr><td>LPG (${num(m.cyl)} cyl.)</td><td class="lpg">${rs(m.lpg)}</td></tr>
         <tr><td>Gasoline refills (${m.nRefill})</td><td class="petrol">${rs(m.refill)}</td></tr>
-        <tr><td>Cost on gasoline only</td><td>${rs(m.gas)}</td></tr>
+        <tr><td><b>Total spent</b></td><td>${rs(m.actual)}</td></tr>
+        <tr><td><b>Would have spent on gasoline only</b></td><td class="petrol">${rs(m.gas)}</td></tr>
         <tr><td>Net savings</td><td class="${cls(m.net)}">${num(m.pct,1)}%</td></tr>
       </table></div>`).join("");
     return `<section>${seg("monthly")}<h2>Monthly summary</h2>
